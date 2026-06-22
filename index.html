@@ -3,945 +3,826 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HAZID Utility F020 2026 — PT. IPPI</title>
+<title>HAZID & Risk Register — PT. IPPI Utility F020/F021</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-:root {
-  --blue:#185FA5; --blue-lt:#E6F1FB; --blue-md:#378ADD;
-  --red:#A32D2D; --red-lt:#FCEBEB;
-  --amber:#854F0B; --amber-lt:#FAEEDA;
-  --green:#3B6D11; --green-lt:#EAF3DE;
-  --teal:#0F6E56; --teal-lt:#E1F5EE;
-  --purple:#3C3489; --purple-lt:#EEEDFE;
-  --gray:#5F5E5A; --gray-lt:#F1EFE8;
-  --man:#7F77DD; --machine:#378ADD; --material:#1D9E75;
-  --method:#BA7517; --measurement:#D85A30; --milieu:#639922;
-  --bg:#F5F6F8; --surface:#FFFFFF;
-  --border:#E2E4E8; --border2:#C8CDD6;
-  --text:#1A1A2E; --text2:#5A6070; --text3:#9099A8;
-  --radius:8px; --radius-lg:12px;
-  --shadow:0 1px 3px rgba(0,0,0,.07);
+:root{
+  --blue:#185FA5;--blue-lt:#E6F1FB;--blue-md:#378ADD;
+  --red:#A32D2D;--red-lt:#FCEBEB;
+  --amber:#854F0B;--amber-lt:#FAEEDA;
+  --green:#3B6D11;--green-lt:#EAF3DE;
+  --teal:#0F6E56;--teal-lt:#E1F5EE;
+  --purple:#3C3489;--purple-lt:#EEEDFE;
+  --man:#7F77DD;--machine:#378ADD;--material:#1D9E75;
+  --method:#BA7517;--measurement:#D85A30;--milieu:#639922;
+  --bg:#F5F6F8;--surface:#fff;
+  --border:#E2E4E8;--border2:#C8CDD6;
+  --text:#1A1A2E;--text2:#5A6070;--text3:#9099A8;
+  --radius:8px;--radius-lg:12px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--text);background:var(--bg);min-height:100vh}
 
-/* ─── AUTH SCREEN ─── */
+/* AUTH */
 #authScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0C2D5A 0%,#185FA5 60%,#1D9E75 100%)}
 .auth-card{background:#fff;border-radius:16px;padding:40px 48px;text-align:center;width:380px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
 .auth-logo{width:56px;height:56px;background:var(--blue-lt);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:26px;color:var(--blue)}
-.auth-card h1{font-size:20px;font-weight:600;color:var(--text);margin-bottom:6px}
+.auth-card h1{font-size:20px;font-weight:600;margin-bottom:6px}
 .auth-card p{font-size:13px;color:var(--text2);margin-bottom:28px;line-height:1.6}
 .btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;border:1px solid var(--border2);border-radius:var(--radius);background:#fff;font-size:14px;font-weight:500;cursor:pointer;transition:.15s;color:var(--text)}
 .btn-google:hover{background:var(--bg);border-color:var(--blue)}
-.btn-google img{width:20px;height:20px}
 .auth-footer{font-size:11px;color:var(--text3);margin-top:20px}
 
-/* ─── LAYOUT ─── */
+/* LAYOUT */
 #app{display:none;flex-direction:column;min-height:100vh}
 .topbar{background:#0C2D5A;color:#fff;display:flex;align-items:center;gap:12px;padding:0 20px;height:52px;flex-shrink:0}
 .topbar .logo{width:32px;height:32px;background:rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
 .topbar h1{font-size:14px;font-weight:600;flex:1}
-.topbar .sub{font-size:11px;color:rgba(255,255,255,.55);white-space:nowrap}
+.topbar .sub{font-size:11px;color:rgba(255,255,255,.5);white-space:nowrap}
 .user-info{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.8)}
 .user-avatar{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(255,255,255,.4)}
 .btn-logout{background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.7);padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer}
 .btn-logout:hover{background:rgba(255,255,255,.2);color:#fff}
 
+/* MODULE TABS */
+.mod-tabs{background:#0C2D5A;border-top:1px solid rgba(255,255,255,.1);display:flex;padding:0 16px;gap:2px}
+.mod-tab{padding:8px 16px;font-size:12px;font-weight:500;color:rgba(255,255,255,.5);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;transition:.15s}
+.mod-tab:hover{color:rgba(255,255,255,.8)}
+.mod-tab.active{color:#fff;border-bottom-color:#fff}
+.mod-tab .mod-badge{background:rgba(255,255,255,.15);border-radius:10px;padding:1px 7px;font-size:10px;font-weight:600}
+.mod-tab.f021 .mod-badge{background:#1D9E7555}
+.mod-tab.f021.active{color:#6EDCB8;border-bottom-color:#6EDCB8}
+
+/* NAV */
 .nav{background:#fff;border-bottom:1px solid var(--border);display:flex;gap:2px;padding:6px 16px}
-.nav button{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--radius);border:none;font-size:13px;cursor:pointer;color:var(--text2);background:transparent;font-family:inherit;transition:.15s}
+.nav button{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--radius);border:none;font-size:12px;cursor:pointer;color:var(--text2);background:transparent;font-family:inherit;transition:.15s}
 .nav button:hover{background:var(--bg)}
 .nav button.active{background:var(--blue-lt);color:var(--blue);font-weight:500}
+.nav.f021 button.active{background:var(--teal-lt);color:var(--teal)}
 
 .main{flex:1;padding:20px;overflow:auto}
 
-/* ─── CARDS & STATS ─── */
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.stat-card{background:#fff;border-radius:var(--radius-lg);padding:16px;border:1px solid var(--border);display:flex;flex-direction:column;gap:4px}
-.stat-card .label{font-size:11px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.4px}
-.stat-card .value{font-size:26px;font-weight:600;line-height:1}
-.stat-card .sub{font-size:11px;color:var(--text3)}
-.stat-card.danger .value{color:var(--red)}
-.stat-card.warn .value{color:var(--amber)}
-.stat-card.info .value{color:var(--blue)}
-.stat-card.success .value{color:var(--green)}
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.sc{background:#fff;border-radius:var(--radius-lg);padding:14px 16px;border:1px solid var(--border)}
+.sc .sl{font-size:11px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.sc .sv{font-size:24px;font-weight:600;line-height:1}
+.sc .ss{font-size:11px;color:var(--text3);margin-top:2px}
+.sc.danger .sv{color:var(--red)}.sc.warn .sv{color:var(--amber)}.sc.info .sv{color:var(--blue)}.sc.success .sv{color:var(--teal)}
 
-.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+/* CHART */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
 .chart-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px}
-.chart-card h3{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:14px}
-.chart-wrap{position:relative;height:200px}
+.chart-card h3{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px}
+.chart-wrap{position:relative;height:190px}
 
-.m6-summary{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:20px}
-.m6-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px;text-align:center}
-.m6-card .m6-icon{font-size:22px;margin-bottom:6px}
-.m6-card .m6-name{font-size:11px;font-weight:600;margin-bottom:2px}
-.m6-card .m6-count{font-size:20px;font-weight:700}
-.m6-card .m6-sub{font-size:10px;color:var(--text3)}
-
-/* ─── TABLE ─── */
+/* TABLE */
 .toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
 .toolbar select,.toolbar input[type=text]{font-size:12px;padding:6px 10px;border-radius:var(--radius);border:1px solid var(--border2);background:#fff;color:var(--text);font-family:inherit;height:34px}
-.toolbar input[type=text]{flex:1;min-width:160px}
-.toolbar .count{font-size:12px;color:var(--text3);white-space:nowrap;line-height:34px}
-
-.table-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
-.table-scroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:12px;min-width:900px}
-th{padding:9px 12px;text-align:left;font-weight:600;font-size:11px;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap;background:#FAFBFC;position:sticky;top:0;z-index:1;text-transform:uppercase;letter-spacing:.3px}
-td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5}
+.toolbar input[type=text]{flex:1;min-width:150px}
+.toolbar .cnt{font-size:12px;color:var(--text3);white-space:nowrap;line-height:34px}
+.tbl-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.tbl-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:800px}
+th{padding:8px 10px;text-align:left;font-weight:600;font-size:10px;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap;background:#FAFBFC;position:sticky;top:0;z-index:1;text-transform:uppercase;letter-spacing:.3px}
+td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#FAFBFC}
 
-/* ─── BADGES ─── */
-.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:600;letter-spacing:.2px}
+/* BADGES */
+.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:600}
 .b-ehs1{background:var(--green-lt);color:var(--green)}
 .b-ehs2{background:var(--blue-lt);color:var(--blue)}
 .b-ehs3{background:var(--amber-lt);color:var(--amber)}
 .b-ehs4{background:var(--red-lt);color:var(--red)}
 .b-sig{background:var(--red-lt);color:var(--red)}
 .b-nsig{background:var(--green-lt);color:var(--green)}
-.b-domain{padding:2px 6px;border-radius:4px;font-size:10px;font-weight:500;margin:1px;display:inline-block}
+.b-dom{padding:2px 6px;border-radius:4px;font-size:10px;font-weight:500;margin:1px;display:inline-block}
 
-/* ─── FORM ─── */
-.form-layout{display:grid;grid-template-columns:1fr 300px;gap:16px;max-width:1000px}
-.form-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
-.form-card h3{font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.fg{display:flex;flex-direction:column;gap:5px}
+/* FORM */
+.form-layout{display:grid;grid-template-columns:1fr 290px;gap:16px;max-width:1000px}
+.form-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px}
+.form-card h3{font-size:13px;font-weight:600;color:var(--text);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fg{display:flex;flex-direction:column;gap:4px}
 .fg.full{grid-column:1/-1}
 .fg label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.3px}
-.fg input,.fg select,.fg textarea{padding:8px 10px;border-radius:var(--radius);border:1px solid var(--border2);background:#fff;color:var(--text);font-size:13px;font-family:inherit;transition:.15s}
-.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,95,165,.12)}
-.fg textarea{resize:vertical;min-height:64px}
-.fg .hint{font-size:11px;color:var(--text3);margin-top:2px}
+.fg input,.fg select,.fg textarea{padding:7px 9px;border-radius:var(--radius);border:1px solid var(--border2);background:#fff;color:var(--text);font-size:12px;font-family:inherit;transition:.15s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,95,165,.1)}
+.fg textarea{resize:vertical;min-height:56px}
+.fg .hint{font-size:10px;color:var(--text3);margin-top:2px}
 .req{color:var(--red)}
+.rp-box{background:var(--blue-lt);border:1px solid #B5D4F4;border-radius:var(--radius);padding:10px 12px;margin-top:4px}
+.rp-lbl{font-size:10px;color:var(--blue);font-weight:600}
+.rp-big{font-size:20px;font-weight:700;margin-top:3px}
 
-.risk-preview{background:var(--blue-lt);border:1px solid #B5D4F4;border-radius:var(--radius);padding:12px;margin-top:6px}
-.risk-preview .rl-label{font-size:11px;color:var(--blue);font-weight:600}
-.risk-preview .rl-big{font-size:22px;font-weight:700;margin-top:4px}
-
-/* ─── 6M PANEL ─── */
-.panel-6m{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;position:sticky;top:20px;max-height:calc(100vh - 120px);overflow-y:auto}
-.panel-6m h3{font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px}
-.panel-search{width:100%;padding:7px 10px;border-radius:var(--radius);border:1px solid var(--border2);font-size:12px;font-family:inherit;margin-bottom:10px;color:var(--text)}
-.panel-search:focus{outline:none;border-color:var(--blue)}
-.m6-section{margin-bottom:12px}
-.m6-section-title{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px}
-.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:100px;font-size:11px;background:#F5F6F8;border:1px solid var(--border);margin:2px;cursor:pointer;transition:.12s;color:var(--text2);line-height:1.4}
+/* PANEL 6M */
+.panel-6m{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px;position:sticky;top:20px;max-height:calc(100vh - 110px);overflow-y:auto}
+.panel-6m h3{font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px}
+.p-search{width:100%;padding:6px 9px;border-radius:var(--radius);border:1px solid var(--border2);font-size:11px;font-family:inherit;margin-bottom:8px;color:var(--text)}
+.p-search:focus{outline:none;border-color:var(--blue)}
+.m6sec{margin-bottom:10px}
+.m6sec-title{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px}
+.chip{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:100px;font-size:10px;background:var(--bg);border:1px solid var(--border);margin:2px;cursor:pointer;transition:.12s;color:var(--text2);line-height:1.4}
 .chip:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-lt)}
-.chip.selected{background:var(--blue-lt);border-color:var(--blue);color:var(--blue);font-weight:500}
-.chip .star{font-size:9px;color:var(--blue)}
+.chip.sel{background:var(--blue-lt);border-color:var(--blue);color:var(--blue);font-weight:500}
+.rc-box{min-height:40px;border:1px solid var(--border2);border-radius:var(--radius);padding:5px 7px;background:#fff;display:flex;flex-wrap:wrap;gap:3px;align-items:flex-start}
+.rc-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:100px;font-size:11px;font-weight:500;cursor:pointer}
+.rc-ph{font-size:11px;color:var(--text3);line-height:2}
 
-/* ─── SELECTED ROOT CAUSE ─── */
-.rc-box{min-height:42px;border:1px solid var(--border2);border-radius:var(--radius);padding:6px 8px;background:#fff;display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start;cursor:text}
-.rc-box:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,95,165,.12)}
-.rc-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:100px;font-size:11px;font-weight:500;border:1px solid transparent}
-.rc-placeholder{font-size:11px;color:var(--text3);line-height:1.8}
+/* F021 SPECIFIC */
+.f021-form{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;max-width:900px}
+.f021-form h3{font-size:13px;font-weight:600;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);color:var(--teal);display:flex;align-items:center;gap:8px}
+.risk-arrow{display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg);border-radius:var(--radius);margin-bottom:14px;border:1px solid var(--border)}
+.risk-arrow .ra-item{display:flex;flex-direction:column;gap:3px;min-width:100px}
+.risk-arrow .ra-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase}
+.risk-arrow .ra-val{font-size:13px;font-weight:500}
+.risk-arrow .ra-arr{font-size:20px;color:var(--text3)}
+.residual-preview{background:var(--teal-lt);border:1px solid #9ADEC8;border-radius:var(--radius);padding:10px 12px;margin-top:4px}
+.residual-preview .rl-lbl{font-size:10px;color:var(--teal);font-weight:600}
+.residual-preview .rl-big{font-size:20px;font-weight:700;color:var(--teal);margin-top:3px}
 
-/* ─── LIBRARY ─── */
-.lib-tabs{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap}
-.lib-tab{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius);border:1px solid var(--border);font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:var(--text2);transition:.12s}
-.lib-tab:hover{border-color:var(--border2)}
+/* FLOW INDICATOR */
+.flow-banner{background:linear-gradient(90deg,var(--blue-lt) 0%,var(--teal-lt) 100%);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:16px}
+.flow-step{display:flex;align-items:center;gap:8px;font-size:13px}
+.flow-step .fs-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.flow-arrow{font-size:18px;color:var(--text3)}
+
+/* LIB */
+.lib-tabs{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.lib-tab{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--radius);border:1px solid var(--border);font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:var(--text2);transition:.12s}
 .lib-tab.active{font-weight:600}
-.lib-toolbar{display:flex;gap:8px;margin-bottom:12px}
-.lib-toolbar input,.lib-toolbar select{font-size:12px;padding:7px 10px;border-radius:var(--radius);border:1px solid var(--border2);background:#fff;color:var(--text);font-family:inherit;height:34px}
-.lib-toolbar input{flex:1}
-.lib-list{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:14px}
-.lib-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border);transition:.12s}
+.lib-list{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:12px}
+.lib-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border);transition:.12s}
 .lib-item:last-child{border-bottom:none}
 .lib-item:hover{background:#FAFBFC}
-.lib-num{min-width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
-.lib-text{flex:1}
-.lib-hazard{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
-.lib-impact{font-size:11px;color:var(--text2);margin-bottom:4px}
-.lib-meta{font-size:10px;color:var(--text3)}
-.lib-note{font-size:10px;color:var(--text3);margin-top:2px;display:flex;align-items:center;gap:3px}
-.btn-del{background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;color:var(--text3);transition:.12s}
+.li-num{min-width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.li-text{flex:1}
+.li-haz{font-size:12px;font-weight:500;margin-bottom:2px}
+.li-imp{font-size:11px;color:var(--text2);margin-bottom:3px}
+.li-note{font-size:10px;color:var(--text3);margin-top:2px;display:flex;align-items:center;gap:3px}
+.btn-del{background:transparent;border:1px solid var(--border);border-radius:6px;padding:3px 7px;font-size:10px;cursor:pointer;color:var(--text3);transition:.12s}
 .btn-del:hover{border-color:var(--red);color:var(--red);background:var(--red-lt)}
+.add-form{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px}
+.add-form h4{font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px}
 
-.add-form{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px}
-.add-form h4{font-size:13px;font-weight:600;color:var(--text);margin-bottom:14px}
-
-/* ─── BUTTONS ─── */
-.btn-primary{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;background:var(--blue);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;transition:.15s;font-family:inherit}
+/* BUTTONS */
+.btn-primary{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:var(--blue);color:#fff;border:none;border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:.15s}
 .btn-primary:hover{background:#0C447C}
-.btn-primary:active{transform:scale(.98)}
-.btn-secondary{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#fff;color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;cursor:pointer;transition:.15s;font-family:inherit}
-.btn-secondary:hover{background:var(--bg);color:var(--text)}
-.btn-secondary:active{transform:scale(.98)}
+.btn-primary.teal{background:var(--teal)}.btn-primary.teal:hover{background:#0B5740}
+.btn-secondary{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;cursor:pointer;font-family:inherit;transition:.15s}
+.btn-secondary:hover{background:var(--bg)}
 
-/* ─── TOAST ─── */
-.toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;color:#fff;display:none;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.2);align-items:center;gap:8px}
-.toast.success{background:#1D9E75}
-.toast.error{background:var(--red)}
-
-/* ─── LOADING ─── */
-.loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:12px;color:var(--text3);font-size:13px}
-.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;padding:11px 18px;border-radius:var(--radius);font-size:13px;font-weight:500;color:#fff;display:none;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.2);align-items:center;gap:8px}
+.toast.ok{background:#1D9E75}.toast.err{background:var(--red)}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;color:var(--text3);gap:8px}
+.empty i{font-size:32px;opacity:.4}
+.empty p{font-size:13px}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;color:var(--text3);gap:8px}
-.empty i{font-size:36px;opacity:.4}
-.empty p{font-size:13px}
-
-/* ─── RESPONSIVE ─── */
 @media(max-width:768px){
   .stats-grid{grid-template-columns:1fr 1fr}
   .chart-grid{grid-template-columns:1fr}
-  .m6-summary{grid-template-columns:repeat(3,1fr)}
   .form-layout{grid-template-columns:1fr}
-  .panel-6m{position:static;max-height:300px}
-  .topbar h1{font-size:12px}
-  .topbar .sub{display:none}
+  .panel-6m{position:static;max-height:280px}
   .main{padding:12px}
+  .topbar .sub{display:none}
+  .flow-banner{flex-wrap:wrap}
 }
 </style>
 </head>
 <body>
 
-<!-- AUTH -->
 <div id="authScreen">
   <div class="auth-card">
     <div class="auth-logo"><i class="ti ti-shield-check"></i></div>
-    <h1>HAZID + 6M Library</h1>
-    <p>Sistem identifikasi bahaya & risiko PT. Indorama Polypet Indonesia — Utility Section F020 2026</p>
+    <h1>HAZID & Risk Register</h1>
+    <p>F020 Identifikasi Bahaya + F021 Pengendalian Risiko<br>PT. Indorama Polypet Indonesia — Utility Section 2026</p>
     <button class="btn-google" onclick="loginGoogle()">
       <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.5 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.4 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.5 15.8 18.9 13 24 13c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.4 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.7-3.5-11.3-8.2l-6.6 5.1C9.6 39.6 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.2 5.6l6.2 5.2C37.1 39.3 44 34.3 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>
       Masuk dengan Google
     </button>
-    <p class="auth-footer">Hanya akun yang diizinkan admin dapat mengakses sistem ini.</p>
+    <p class="auth-footer">Akses untuk tim HSE/QA PT. IPPI</p>
   </div>
 </div>
 
-<!-- APP -->
 <div id="app" style="display:flex">
   <div class="topbar">
     <div class="logo"><i class="ti ti-shield-check"></i></div>
-    <h1>HAZID Utility F020 — 2026</h1>
-    <span class="sub">PT. Indorama Polypet Indonesia · Utility Section</span>
+    <h1>HAZID + Risk Register — Utility F020/F021 · 2026</h1>
+    <span class="sub">PT. Indorama Polypet Indonesia</span>
     <div class="user-info">
-      <img class="user-avatar" id="userAvatar" src="" alt="Avatar">
+      <img class="user-avatar" id="userAvatar" src="" alt="">
       <span id="userName">–</span>
       <button class="btn-logout" onclick="logout()"><i class="ti ti-logout"></i> Keluar</button>
     </div>
   </div>
-  <div class="nav" id="mainNav">
+
+  <!-- MODULE TABS -->
+  <div class="mod-tabs">
+    <div class="mod-tab active" id="modF020" onclick="setModule('f020')">
+      <i class="ti ti-search"></i> F020 — Identifikasi Bahaya
+      <span class="mod-badge" id="badgeF020">–</span>
+    </div>
+    <div class="mod-tab f021" id="modF021" onclick="setModule('f021')">
+      <i class="ti ti-shield-half"></i> F021 — Pengendalian & Residual Risk
+      <span class="mod-badge" id="badgeF021">–</span>
+    </div>
+  </div>
+
+  <!-- F020 NAV -->
+  <div class="nav" id="navF020">
     <button class="active" onclick="showTab('dashboard')"><i class="ti ti-layout-dashboard"></i> Dashboard</button>
     <button onclick="showTab('viewer')"><i class="ti ti-table"></i> Data HAZID</button>
     <button onclick="showTab('input')"><i class="ti ti-plus"></i> Input Baru</button>
     <button onclick="showTab('library')"><i class="ti ti-books"></i> Library 6M</button>
   </div>
+
+  <!-- F021 NAV -->
+  <div class="nav f021" id="navF021" style="display:none">
+    <button class="active" onclick="showTab('f021dash')"><i class="ti ti-layout-dashboard"></i> Dashboard</button>
+    <button onclick="showTab('f021list')"><i class="ti ti-table"></i> Register Risiko</button>
+    <button onclick="showTab('f021input')"><i class="ti ti-shield-plus"></i> Tambah Pengendalian</button>
+  </div>
+
   <div class="main" id="mainContent">
-    <div class="loading"><div class="spinner"></div> Memuat data...</div>
+    <div class="empty"><div class="spinner"></div></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<!-- FIREBASE -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import { getFirestore, collection, doc, addDoc, getDocs, deleteDoc, onSnapshot, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import{getFirestore,collection,doc,addDoc,getDocs,deleteDoc,onSnapshot,serverTimestamp,query,orderBy,updateDoc}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDp4Q-e47-yjHsOa66oiicACHUsBjelcK8",
-  authDomain: "hazid-c86d2.firebaseapp.com",
-  projectId: "hazid-c86d2",
-  storageBucket: "hazid-c86d2.firebasestorage.app",
-  messagingSenderId: "618912275322",
-  appId: "1:618912275322:web:fa3fb1b08c5168abe814c3"
-};
+const fbApp=initializeApp({apiKey:"AIzaSyDp4Q-e47-yjHsOa66oiicACHUsBjelcK8",authDomain:"hazid-c86d2.firebaseapp.com",projectId:"hazid-c86d2",storageBucket:"hazid-c86d2.firebasestorage.app",messagingSenderId:"618912275322",appId:"1:618912275322:web:fa3fb1b08c5168abe814c3"});
+const auth=getAuth(fbApp),db=getFirestore(fbApp);
 
-const fbApp = initializeApp(firebaseConfig);
-const auth = getAuth(fbApp);
-const db = getFirestore(fbApp);
-
-// ─── STATIC DATA ───
-const RISK_MATRIX={A1:'EHS-2',A2:'EHS-3',A3:'EHS-3',A4:'EHS-3',A5:'EHS-3',A6:'EHS-4',A7:'EHS-4',A8:'EHS-4',B1:'EHS-2',B2:'EHS-3',B3:'EHS-3',B4:'EHS-3',B5:'EHS-3',B6:'EHS-4',B7:'EHS-4',B8:'EHS-4',C1:'EHS-2',C2:'EHS-2',C3:'EHS-3',C4:'EHS-3',C5:'EHS-3',C6:'EHS-4',C7:'EHS-4',C8:'EHS-4',D1:'EHS-1',D2:'EHS-2',D3:'EHS-3',D4:'EHS-3',D5:'EHS-3',D6:'EHS-4',D7:'EHS-4',D8:'EHS-4',E1:'EHS-1',E2:'EHS-2',E3:'EHS-2',E4:'EHS-3',E5:'EHS-3',E6:'EHS-3',E7:'EHS-4',E8:'EHS-4',F1:'EHS-1',F2:'EHS-1',F3:'EHS-2',F4:'EHS-2',F5:'EHS-3',F6:'EHS-3',F7:'EHS-3',F8:'EHS-4',G1:'EHS-1',G2:'EHS-1',G3:'EHS-1',G4:'EHS-2',G5:'EHS-2',G6:'EHS-2',G7:'EHS-3',G8:'EHS-3',H1:'EHS-1',H2:'EHS-1',H3:'EHS-1',H4:'EHS-1',H5:'EHS-1',H6:'EHS-2',H7:'EHS-2',H8:'EHS-3'};
-const CONTROLS={1:'Menghilangkan sumber bahaya',2:'Mengganti dengan yang lebih aman',3:'Mengisolasi sumber bahaya',4:'LOTO (Lockout/Tagout)',5:'Label & tanda peringatan',6:'Rotasi kerja',7:'Pengendalian ergonomi',8:'Kebersihan & sanitasi',9:'Pengaturan ventilasi',10:'Inspeksi',11:'Pemantauan & pengukuran',12:'Program pemeliharaan',13:'Pelatihan & edukasi',14:'PPE Minimal',15:'PPE Tambahan',16:'Penyediaan alat kritis',17:'MSDS / Lembar data keselamatan',18:'Desain ulang pekerjaan',19:'Penyimpanan yang aman',20:'Pengangkutan yang aman',21:'Sistem pembuangan aman',22:'Pemeriksaan kesehatan',23:'Perencanaan kerja aman',24:'Prosedur & instruksi kerja',25:'Peningkatan kepedulian'};
-const M6_COLORS={Man:'#7F77DD',Machine:'#378ADD',Material:'#1D9E75',Method:'#BA7517',Measurement:'#D85A30',Milieu:'#639922'};
-const M6_ICONS={Man:'ti-users',Machine:'ti-engine',Material:'ti-package',Method:'ti-route',Measurement:'ti-ruler-measure',Milieu:'ti-world'};
-const M6_BG={Man:'#EEEDFE',Machine:'#E6F1FB',Material:'#E1F5EE',Method:'#FAEEDA',Measurement:'#FAECE7',Milieu:'#EAF3DE'};
-const DOMAIN_STYLE={HSE:'background:#FCEBEB;color:#A32D2D',Quality:'background:#EEEDFE;color:#3C3489',Operational:'background:#FAEEDA;color:#854F0B',Environment:'background:#E1F5EE;color:#0F6E56',Compliance:'background:#E6F1FB;color:#185FA5',Measurement:'background:#FAECE7;color:#993C1D',Financial:'background:#F1EFE8;color:#5F5E5A'};
+// ── STATIC ──
+const RM={A1:'EHS-2',A2:'EHS-3',A3:'EHS-3',A4:'EHS-3',A5:'EHS-3',A6:'EHS-4',A7:'EHS-4',A8:'EHS-4',B1:'EHS-2',B2:'EHS-3',B3:'EHS-3',B4:'EHS-3',B5:'EHS-3',B6:'EHS-4',B7:'EHS-4',B8:'EHS-4',C1:'EHS-2',C2:'EHS-2',C3:'EHS-3',C4:'EHS-3',C5:'EHS-3',C6:'EHS-4',C7:'EHS-4',C8:'EHS-4',D1:'EHS-1',D2:'EHS-2',D3:'EHS-3',D4:'EHS-3',D5:'EHS-3',D6:'EHS-4',D7:'EHS-4',D8:'EHS-4',E1:'EHS-1',E2:'EHS-2',E3:'EHS-2',E4:'EHS-3',E5:'EHS-3',E6:'EHS-3',E7:'EHS-4',E8:'EHS-4',F1:'EHS-1',F2:'EHS-1',F3:'EHS-2',F4:'EHS-2',F5:'EHS-3',F6:'EHS-3',F7:'EHS-3',F8:'EHS-4',G1:'EHS-1',G2:'EHS-1',G3:'EHS-1',G4:'EHS-2',G5:'EHS-2',G6:'EHS-2',G7:'EHS-3',G8:'EHS-3',H1:'EHS-1',H2:'EHS-1',H3:'EHS-1',H4:'EHS-1',H5:'EHS-1',H6:'EHS-2',H7:'EHS-2',H8:'EHS-3'};
+const CTRL={1:'Menghilangkan sumber bahaya',2:'Mengganti dengan yang lebih aman',3:'Mengisolasi sumber bahaya',4:'LOTO (Lockout/Tagout)',5:'Label & tanda peringatan',6:'Rotasi kerja',7:'Pengendalian ergonomi',8:'Kebersihan & sanitasi',9:'Pengaturan ventilasi',10:'Inspeksi',11:'Pemantauan & pengukuran',12:'Program pemeliharaan',13:'Pelatihan & edukasi',14:'PPE Minimal',15:'PPE Tambahan',16:'Penyediaan alat kritis',17:'MSDS / Lembar data keselamatan',18:'Desain ulang pekerjaan',19:'Penyimpanan yang aman',20:'Pengangkutan yang aman',21:'Sistem pembuangan aman',22:'Pemeriksaan kesehatan',23:'Perencanaan kerja aman',24:'Prosedur & instruksi kerja',25:'Peningkatan kepedulian'};
+const MC={Man:'#7F77DD',Machine:'#378ADD',Material:'#1D9E75',Method:'#BA7517',Measurement:'#D85A30',Milieu:'#639922'};
+const MB={Man:'#EEEDFE',Machine:'#E6F1FB',Material:'#E1F5EE',Method:'#FAEEDA',Measurement:'#FAECE7',Milieu:'#EAF3DE'};
+const MI={Man:'ti-users',Machine:'ti-engine',Material:'ti-package',Method:'ti-route',Measurement:'ti-ruler-measure',Milieu:'ti-world'};
+const DS={HSE:'background:#FCEBEB;color:#A32D2D',Quality:'background:#EEEDFE;color:#3C3489',Operational:'background:#FAEEDA;color:#854F0B',Environment:'background:#E1F5EE;color:#0F6E56',Compliance:'background:#E6F1FB;color:#185FA5',Measurement:'background:#FAECE7;color:#993C1D',Financial:'background:#F1EFE8;color:#5F5E5A'};
 
 const SEED_HAZID=[
-  {section:'WWT',activity:'START-UP',sub:'Pengisian limbah ke Equalization Container',hazard:'Potensi luapan',rootCause:'mc005,mi007',consequence:'Tumpahan air limbah, pencemaran area',category:'Environment',sr:'F',ll:4,rr:'EHS-2',sig:'NS',controls:'3,10,11,16,20,24',legal:''},
-  {section:'WWT',activity:'START-UP',sub:'Start-Up Netralisasi',hazard:'Chemical aktif — over-dosing',rootCause:'me011,m003,ms002',consequence:'Proses tidak terkontrol, dampak lingkungan',category:'Environment',sr:'E',ll:4,rr:'EHS-3',sig:'S',controls:'9,10,11,13,17,24',legal:''},
-  {section:'WWT',activity:'KEADAAN DARURAT',sub:'Air meluap dari equalisasi',hazard:'Level tinggi, pompa gagal',rootCause:'mc001,mc005,ms005',consequence:'Pencemaran area pabrik',category:'Environment',sr:'F',ll:5,rr:'EHS-3',sig:'S',controls:'3,10,11,16,20,24',legal:''},
-  {section:'WWT',activity:'KEADAAN DARURAT',sub:'EGSB bocor/pecah',hazard:'Tekanan internal berlebih',rootCause:'mc010,mc007,me007',consequence:'Dampak lingkungan signifikan',category:'Environment',sr:'C',ll:2,rr:'EHS-2',sig:'S',controls:'3,10,11,16,20,24',legal:''},
-  {section:'WWT',activity:'PERSIAPAN BAHAN KIMIA',sub:'Pengisian Caustic Cair (48%)',hazard:'Caustic korosif — risiko tumpahan',rootCause:'mt001,m003,me001',consequence:'Luka kimia, pencemaran tanah/air',category:'Environment',sr:'E',ll:4,rr:'EHS-3',sig:'S',controls:'3,9,10,14,17,20,24',legal:''},
-  {section:'WWT',activity:'KEADAAN NORMAL',sub:'Pemompaan limbah dari sump pit',hazard:'Overflow tidak terdeteksi',rootCause:'mc001,ms002,me002',consequence:'Tumpahan limbah, pencemaran',category:'Environment',sr:'F',ll:6,rr:'EHS-3',sig:'S',controls:'3,10,11,16,20,24',legal:''},
-  {section:'CFH',activity:'PERSIAPAN START-UP CFH',sub:'Pengisian pasir silika',hazard:'Debu silika & manual handling',rootCause:'mt014,m008,me001',consequence:'Cedera MSDs, gangguan pernapasan',category:'Health/Safety',sr:'F',ll:6,rr:'EHS-3',sig:'S',controls:'14,15,7,22,10',legal:'Permen.04/Men/1980'},
-  {section:'CFH',activity:'START-UP & PEMBAKARAN AWAL',sub:'Pembakaran arang/kayu + solar awal',hazard:'Solar mudah terbakar — flash fire',rootCause:'mt005,me002,m003',consequence:'Kebakaran, luka bakar serius',category:'Safety',sr:'F',ll:5,rr:'EHS-3',sig:'',controls:'14,15,10,11',legal:'IPPI/HSE-L2-009'},
-  {section:'CFH',activity:'KONDISI DARURAT',sub:'Bag filter / dust collector gagal',hazard:'Debu fly ash B3 lepas ke atmosfer',rootCause:'mc009,me007,ms013',consequence:'Emisi PM tinggi, sanksi lingkungan',category:'Environment',sr:'E',ll:6,rr:'EHS-3',sig:'S',controls:'24,8,11,15',legal:'PP 101/2014'},
-  {section:'GFH',activity:'Persiapan Start-Up GFH',sub:'Pembukaan valve fuel (NG / Diesel)',hazard:'Natural gas bertekanan — kebocoran',rootCause:'mc002,mc005,me005',consequence:'Flash fire, ledakan, fatality',category:'Safety',sr:'E',ll:4,rr:'EHS-3',sig:'',controls:'1,3,4,9,10,16,21,24',legal:'IPPI/HSE-L2-009'},
-  {section:'GFH',activity:'Peralihan Bahan Bakar (NG ↔ Diesel)',sub:'Switching selector fuel',hazard:'Campuran NG & diesel — eksplosif',rootCause:'m003,me002,mc003',consequence:'Ledakan besar, kerusakan fasilitas',category:'Safety',sr:'E',ll:1,rr:'EHS-1',sig:'',controls:'1,3,4,5,10,16,21,24',legal:''},
-  {section:'PSA',activity:'KONDISI DARURAT PSA',sub:'Kebocoran O2 di area PSA',hazard:'Oksigen konsentrasi tinggi',rootCause:'mc002,mc009,ms005',consequence:'Kebakaran/ledakan diperbesar',category:'Safety',sr:'D',ll:3,rr:'EHS-3',sig:'',controls:'3,4,5,9,10,14,21,24',legal:'IPPI/HSE-L2-009'},
-  {section:'BOILER',activity:'KONDISI DARURAT BOILER',sub:'Low low water level drum boiler',hazard:'Kekeringan drum — tube burst',rootCause:'mc009,ms005,m003',consequence:'Ledakan tube, kerusakan fatal boiler',category:'Safety',sr:'C',ll:2,rr:'EHS-2',sig:'',controls:'3,10,11,12,16,24',legal:'Permen.04/Men/1980'},
-  {section:'COOLING WATER',activity:'OPERASI COOLING TOWER',sub:'Risiko Legionella di sistem CW',hazard:'Biofilm & bakteri Legionella',rootCause:'mt015,me012,ms002',consequence:'Penyakit Legionnaires pekerja',category:'Health',sr:'E',ll:4,rr:'EHS-3',sig:'S',controls:'8,10,11,13,22,24',legal:''},
-  {section:'MATERIAL',activity:'UNLOADING BATUBARA',sub:'Unloading dari truk ke hopper CFH',hazard:'Debu batubara — pencemaran udara ambien',rootCause:'mt009,mi006,me001',consequence:'Gangguan pernapasan, baku mutu terlampaui',category:'Environment',sr:'F',ll:5,rr:'EHS-3',sig:'S',controls:'8,9,10,11,14,15,20,24',legal:'PP 41/1999'}
+  {section:'WWT',activity:'START-UP',sub:'Start dosing caustic, urea, FeCl₃',hazard:'Chemical aktif — over-dosing',rootCause:'',consequence:'Proses tidak terkontrol, dampak lingkungan',category:'Environment',sr:'F',ll:6,rr:'EHS-3',sig:'S',controls:'9,10,11,13,17,24',legal:''},
+  {section:'WWT',activity:'KEADAAN DARURAT',sub:'Air meluap dari equalisasi',hazard:'Level tinggi, pompa gagal',rootCause:'',consequence:'Pencemaran area',category:'Environment',sr:'F',ll:5,rr:'EHS-3',sig:'S',controls:'3,10,11,16,20,24',legal:''},
+  {section:'WWT',activity:'KEADAAN DARURAT',sub:'EGSB bocor/pecah',hazard:'Tekanan internal berlebih',rootCause:'',consequence:'Dampak lingkungan signifikan',category:'Environment',sr:'C',ll:2,rr:'EHS-2',sig:'S',controls:'3,10,11,16,20,24',legal:''},
+  {section:'WWT',activity:'PERSIAPAN BAHAN KIMIA',sub:'Pengisian Caustic Cair (48%)',hazard:'Caustic korosif — risiko tumpahan',rootCause:'',consequence:'Luka kimia, pencemaran tanah/air',category:'Environment',sr:'E',ll:4,rr:'EHS-3',sig:'S',controls:'3,9,10,14,17,20,24',legal:''},
+  {section:'WWT',activity:'KEADAAN NORMAL',sub:'Pemompaan limbah dari sump pit',hazard:'Overflow tidak terdeteksi',rootCause:'',consequence:'Tumpahan limbah, pencemaran',category:'Environment',sr:'F',ll:6,rr:'EHS-3',sig:'S',controls:'3,10,11,16,20,24',legal:''},
+  {section:'CFH',activity:'PERSIAPAN START-UP CFH',sub:'Pengisian pasir silika',hazard:'Debu silika & manual handling',rootCause:'',consequence:'Cedera MSDs, gangguan pernapasan',category:'Health/Safety',sr:'F',ll:6,rr:'EHS-3',sig:'S',controls:'14,15,7,22,10',legal:'Permen.04/Men/1980'},
+  {section:'CFH',activity:'START-UP & PEMBAKARAN AWAL',sub:'Pembakaran arang/kayu + solar awal',hazard:'Solar mudah terbakar — flash fire',rootCause:'',consequence:'Kebakaran, luka bakar serius',category:'Safety',sr:'F',ll:5,rr:'EHS-3',sig:'',controls:'14,15,10,11',legal:'IPPI/HSE-L2-009'},
+  {section:'CFH',activity:'KONDISI DARURAT',sub:'Bag filter / dust collector gagal',hazard:'Debu fly ash B3 lepas ke atmosfer',rootCause:'',consequence:'Emisi PM tinggi, sanksi lingkungan',category:'Environment',sr:'E',ll:6,rr:'EHS-3',sig:'S',controls:'24,8,11,15',legal:'PP 101/2014'},
+  {section:'GFH',activity:'Persiapan Start-Up GFH',sub:'Pembukaan valve fuel (NG / Diesel)',hazard:'Natural gas bertekanan — kebocoran',rootCause:'',consequence:'Flash fire, ledakan, fatality',category:'Safety',sr:'E',ll:4,rr:'EHS-3',sig:'',controls:'1,3,4,9,10,16,21,24',legal:'IPPI/HSE-L2-009'},
+  {section:'GFH',activity:'Peralihan Bahan Bakar (NG ↔ Diesel)',sub:'Switching selector fuel',hazard:'Campuran NG & diesel — eksplosif',rootCause:'',consequence:'Ledakan besar, kerusakan fasilitas',category:'Safety',sr:'E',ll:1,rr:'EHS-1',sig:'',controls:'1,3,4,5,10,16,21,24',legal:''},
+  {section:'PSA',activity:'KONDISI DARURAT PSA',sub:'Kebocoran O2 di area PSA',hazard:'Oksigen konsentrasi tinggi',rootCause:'',consequence:'Kebakaran/ledakan diperbesar',category:'Safety',sr:'D',ll:3,rr:'EHS-3',sig:'',controls:'3,4,5,9,10,14,21,24',legal:'IPPI/HSE-L2-009'},
+  {section:'BOILER',activity:'KONDISI DARURAT BOILER',sub:'Low low water level drum boiler',hazard:'Kekeringan drum — tube burst',rootCause:'',consequence:'Ledakan tube, kerusakan fatal boiler',category:'Safety',sr:'C',ll:2,rr:'EHS-2',sig:'',controls:'3,10,11,12,16,24',legal:'Permen.04/Men/1980'},
+  {section:'COOLING WATER',activity:'OPERASI COOLING TOWER',sub:'Risiko Legionella di sistem CW',hazard:'Biofilm & bakteri Legionella',rootCause:'',consequence:'Penyakit Legionnaires pekerja',category:'Health',sr:'E',ll:4,rr:'EHS-3',sig:'S',controls:'8,10,11,13,22,24',legal:''},
+  {section:'MATERIAL',activity:'UNLOADING BATUBARA',sub:'Unloading dari truk ke hopper CFH',hazard:'Debu batubara — pencemaran udara',rootCause:'',consequence:'Gangguan pernapasan, baku mutu terlampaui',category:'Environment',sr:'F',ll:5,rr:'EHS-3',sig:'S',controls:'8,9,10,11,14,15,20,24',legal:'PP 41/1999'}
+];
+
+const SEED_F021=[
+  {hazardId:'',section:'WWT',activity:'START-UP',sub:'Start dosing caustic, urea, FeCl₃',hazard:'Chemical aktif — over-dosing',existingRR:'EHS-3',sig:'S',addControl:'11,12,23',opportunity:'Efisiensi penggunaan bahan kimia & stabilitas pH proses',programNeeded:true,programDesc:'Program auto-dosing & monitoring pH real-time',residualSR:'E',residualLL:3,residualRL:'E3',residualRR:'EHS-2',residualSig:'NS',category:'Environment'},
+  {hazardId:'',section:'WWT',activity:'KEADAAN DARURAT',sub:'Air meluap dari equalisasi',hazard:'Level tinggi, pompa gagal',existingRR:'EHS-3',sig:'S',addControl:'21,12,23',opportunity:'Minimasi tumpahan limbah & perlindungan area kerja',programNeeded:true,programDesc:'Instalasi high-level alarm otomatis & backup pompa',residualSR:'E',residualLL:3,residualRL:'E3',residualRR:'EHS-2',residualSig:'NS',category:'Environment'},
+  {hazardId:'',section:'WWT',activity:'KEADAAN DARURAT',sub:'EGSB bocor/pecah',hazard:'Tekanan internal berlebih',existingRR:'EHS-3',sig:'S',addControl:'3,16,21',opportunity:'Pencegahan pencemaran besar & pengurangan biaya remediasi',programNeeded:true,programDesc:'Inspeksi periodik EGSB & thickness measurement',residualSR:'D',residualLL:2,residualRL:'D2',residualRR:'EHS-2',residualSig:'NS',category:'Environment'},
+  {hazardId:'',section:'WWT',activity:'PERSIAPAN BAHAN KIMIA',sub:'Pengisian Caustic Cair (48%)',hazard:'Caustic korosif — risiko tumpahan',existingRR:'EHS-3',sig:'S',addControl:'3,16,21',opportunity:'Minimasi tumpahan bahan kimia & penghematan biaya',programNeeded:false,programDesc:'',residualSR:'E',residualLL:2,residualRL:'E2',residualRR:'EHS-2',residualSig:'NS',category:'Environment'},
+  {hazardId:'',section:'CFH',activity:'PERSIAPAN START-UP CFH',sub:'Pengisian pasir silika',hazard:'Debu silika & manual handling',existingRR:'EHS-3',sig:'',addControl:'7,13,18,16',opportunity:'Pengurangan risiko cedera ergonomi melalui alat bantu angkat',programNeeded:true,programDesc:'Pengadaan alat bantu angkat & pelatihan manual handling',residualSR:'D',residualLL:2,residualRL:'D2',residualRR:'EHS-2',residualSig:'',category:'Health/Safety'},
+  {hazardId:'',section:'CFH',activity:'START-UP & PEMBAKARAN AWAL',sub:'Pembakaran arang/kayu + solar awal',hazard:'Solar mudah terbakar — flash fire',existingRR:'EHS-3',sig:'',addControl:'3,16,21',opportunity:'Pengurangan potensi flash fire & pengendalian bahan bakar awal',programNeeded:false,programDesc:'',residualSR:'D',residualLL:2,residualRL:'D2',residualRR:'EHS-2',residualSig:'',category:'Safety'},
+  {hazardId:'',section:'CFH',activity:'KONDISI DARURAT',sub:'Bag filter / dust collector gagal',hazard:'Debu fly ash B3 lepas ke atmosfer',existingRR:'EHS-3',sig:'S',addControl:'11,12,16',opportunity:'Penurunan emisi partikulat & peningkatan kepatuhan regulasi',programNeeded:true,programDesc:'Pemasangan CEMS & jadwal PM bag filter',residualSR:'E',residualLL:2,residualRL:'E2',residualRR:'EHS-2',residualSig:'NS',category:'Environment'},
+  {hazardId:'',section:'GFH',activity:'Persiapan Start-Up GFH',sub:'Pembukaan valve fuel (NG / Diesel)',hazard:'Natural gas bertekanan — kebocoran',existingRR:'EHS-3',sig:'',addControl:'3,16,21',opportunity:'Pengurangan potensi kebocoran fuel & peningkatan keselamatan',programNeeded:false,programDesc:'',residualSR:'D',residualLL:2,residualRL:'D2',residualRR:'EHS-2',residualSig:'',category:'Safety'},
+  {hazardId:'',section:'PSA',activity:'KONDISI DARURAT PSA',sub:'Kebocoran O2 di area PSA',hazard:'Oksigen konsentrasi tinggi',existingRR:'EHS-3',sig:'',addControl:'9,21,24',opportunity:'Pengurangan risiko kebakaran & keandalan proteksi sistem',programNeeded:true,programDesc:'Instalasi O2 detector & alarm area PSA',residualSR:'D',residualLL:2,residualRL:'D2',residualRR:'EHS-2',residualSig:'',category:'Safety'},
+  {hazardId:'',section:'BOILER',activity:'OPERASI NORMAL BOILER',sub:'Monitoring tekanan & level drum',hazard:'Kegagalan deteksi kondisi abnormal',existingRR:'EHS-3',sig:'',addControl:'11,12,23',opportunity:'Deteksi dini & pencegahan trip/kerusakan besar',programNeeded:true,programDesc:'Upgrade sistem alarm DCS & prosedur monitoring ketat',residualSR:'D',residualLL:2,residualRL:'D2',residualRR:'EHS-2',residualSig:'',category:'Operational'},
+  {hazardId:'',section:'COOLING WATER',activity:'OPERASI COOLING TOWER',sub:'Risiko Legionella di sistem CW',hazard:'Biofilm & bakteri Legionella',existingRR:'EHS-3',sig:'S',addControl:'8,10,11,13,22,24',opportunity:'Perlindungan kesehatan pekerja & citra lingkungan perusahaan',programNeeded:true,programDesc:'Program monitoring Legionella berkala & dosing biocide terjadwal',residualSR:'E',residualLL:2,residualRL:'E2',residualRR:'EHS-2',residualSig:'NS',category:'Health'},
+  {hazardId:'',section:'MATERIAL',activity:'UNLOADING BATUBARA',sub:'Unloading dari truk ke hopper CFH',hazard:'Debu batubara — pencemaran udara',existingRR:'EHS-3',sig:'S',addControl:'8,9,10,11,14,15,20,24',opportunity:'Kepatuhan baku mutu udara & pengurangan keluhan masyarakat',programNeeded:true,programDesc:'Pemasangan water sprinkler di area unloading & monitoring TSP',residualSR:'E',residualLL:3,residualRL:'E3',residualRR:'EHS-2',residualSig:'NS',category:'Environment'}
 ];
 
 const SEED_LIB=[
-  // MAN
   {m:'Man',hazard:'Kelelahan operator / fatigue',impact:'Kesalahan operasi, kecelakaan kerja',domains:['HSE','Quality','Operational'],ippi:true,note:'Shift malam, overtime berlebih'},
   {m:'Man',hazard:'Kurang kompetensi / pelatihan tidak memadai',impact:'Prosedur tidak diikuti, produk cacat',domains:['Quality','HSE'],ippi:true,note:''},
   {m:'Man',hazard:'Human error tidak disengaja (slip/lapse)',impact:'Salah setting parameter, salah valve',domains:['HSE','Quality','Operational'],ippi:true,note:''},
-  {m:'Man',hazard:'Pelanggaran prosedur disengaja (violation)',impact:'Bypass safety interlock, shortcut berbahaya',domains:['HSE'],ippi:true,note:'Routine vs exceptional violation'},
+  {m:'Man',hazard:'Pelanggaran prosedur disengaja (violation)',impact:'Bypass safety interlock, shortcut berbahaya',domains:['HSE'],ippi:true,note:''},
   {m:'Man',hazard:'Komunikasi tidak efektif antar shift',impact:'Informasi proses tidak tersampaikan',domains:['Operational','Quality'],ippi:true,note:'Handover shift'},
-  {m:'Man',hazard:'Stres kerja / tekanan target produksi',impact:'Keputusan tergesa, abaikan sinyal bahaya',domains:['HSE','Quality'],ippi:false,note:''},
   {m:'Man',hazard:'APD tidak digunakan dengan benar',impact:'Paparan hazard kimia, fisik, biologi',domains:['HSE'],ippi:true,note:''},
   {m:'Man',hazard:'Ergonomi buruk / posisi kerja tidak tepat',impact:'MSDs, cedera punggung, kelelahan kronik',domains:['HSE'],ippi:true,note:'Manual handling, postur janggal'},
   {m:'Man',hazard:'Distraksi / kurang perhatian saat operasi',impact:'Salah baca parameter, over/under dosing',domains:['Quality','Operational'],ippi:false,note:''},
   {m:'Man',hazard:'JSA/TBT tidak dilaksanakan sebelum pekerjaan',impact:'Hazard tidak teridentifikasi',domains:['HSE'],ippi:true,note:''},
   {m:'Man',hazard:'Operator baru / belum familiar dengan area',impact:'Salah identifikasi peralatan',domains:['HSE','Quality'],ippi:true,note:''},
-  {m:'Man',hazard:'Teknik sampling tidak representatif',impact:'Data kualitas menyesatkan',domains:['Quality','Measurement'],ippi:true,note:''},
   {m:'Man',hazard:'Pencatatan data tidak akurat / falsifikasi',impact:'Ketidaksesuaian audit, keputusan salah',domains:['Quality','Compliance'],ippi:true,note:''},
+  {m:'Man',hazard:'Stres kerja / tekanan target produksi',impact:'Keputusan tergesa, abaikan sinyal bahaya',domains:['HSE','Quality'],ippi:false,note:''},
+  {m:'Man',hazard:'Teknik sampling tidak representatif',impact:'Data kualitas menyesatkan',domains:['Quality','Measurement'],ippi:true,note:''},
   {m:'Man',hazard:'Rotasi terlalu sering tanpa transfer knowledge',impact:'Kehilangan kompetensi lokal',domains:['Operational','Quality'],ippi:false,note:''},
-  {m:'Man',hazard:'Kurang motivasi / engagement rendah',impact:'Penurunan kualitas pekerjaan, absensi',domains:['Quality','Operational'],ippi:false,note:''},
-  // MACHINE
+  {m:'Man',hazard:'Kurang motivasi / engagement rendah',impact:'Penurunan kualitas pekerjaan',domains:['Quality','Operational'],ippi:false,note:''},
   {m:'Machine',hazard:'Kegagalan peralatan berputar (pompa, motor, fan)',impact:'Trip produksi, cedera mekanik',domains:['HSE','Operational'],ippi:true,note:'Bearing aus, seal bocor'},
   {m:'Machine',hazard:'Kebocoran pipa / fitting / flange',impact:'Tumpahan bahan kimia, pencemaran',domains:['HSE','Environment'],ippi:true,note:'Korosi, vibrasi, thermal expansion'},
   {m:'Machine',hazard:'Kegagalan sistem kontrol / PLC / DCS',impact:'Parameter proses tidak terkendali',domains:['Quality','Operational','HSE'],ippi:true,note:''},
-  {m:'Machine',hazard:'Peralatan listrik tidak terisolasi dengan benar',impact:'Electrical shock, kebakaran',domains:['HSE'],ippi:true,note:''},
   {m:'Machine',hazard:'Valve macet / tidak berfungsi normal',impact:'Overpressure, overflow, proses tidak terkontrol',domains:['HSE','Operational'],ippi:true,note:''},
   {m:'Machine',hazard:'Sensor / instrumen tidak terkalibrasi',impact:'Pembacaan parameter salah',domains:['Quality','Measurement'],ippi:true,note:''},
-  {m:'Machine',hazard:'Peralatan melebihi usia pakai (end of life)',impact:'Kegagalan mendadak, downtime',domains:['Operational','HSE'],ippi:false,note:''},
-  {m:'Machine',hazard:'Vibrasi berlebih pada mesin / rotating equipment',impact:'Kelelahan material, kebocoran fitting',domains:['HSE','Operational'],ippi:true,note:''},
   {m:'Machine',hazard:'Sistem interlock / safety device tidak berfungsi',impact:'Kegagalan proteksi berlapis',domains:['HSE'],ippi:true,note:'SIL, PRV, PSV'},
   {m:'Machine',hazard:'Korosi internal pada vessel / tangki',impact:'Kebocoran produk, kegagalan struktural',domains:['HSE','Environment'],ippi:true,note:''},
   {m:'Machine',hazard:'Fouling / scaling di heat exchanger',impact:'Efisiensi transfer panas turun',domains:['Quality','Operational'],ippi:true,note:'Relevan untuk boiler & CW'},
-  {m:'Machine',hazard:'Kegagalan sistem utilitas (udara instrumen, listrik)',impact:'Seluruh sistem proses terganggu',domains:['Operational','HSE'],ippi:true,note:''},
   {m:'Machine',hazard:'Filter / strainer tersumbat',impact:'Aliran terhambat, tekanan berlebih',domains:['Operational','Quality'],ippi:true,note:''},
-  {m:'Machine',hazard:'Desain peralatan tidak sesuai kapasitas aktual',impact:'Overload, penurunan performa',domains:['Operational','Quality'],ippi:false,note:''},
-  {m:'Machine',hazard:'Peralatan pengangkat (crane, forklift) tidak terawat',impact:'Jatuhnya beban, kecelakaan fatal',domains:['HSE'],ippi:true,note:''},
-  // MATERIAL
+  {m:'Machine',hazard:'Peralatan melebihi usia pakai (end of life)',impact:'Kegagalan mendadak, downtime',domains:['Operational','HSE'],ippi:false,note:''},
   {m:'Material',hazard:'Bahan kimia korosif tumpah (NaOH, FeCl3, H3PO4)',impact:'Luka kimia serius, pencemaran tanah/air',domains:['HSE','Environment'],ippi:true,note:''},
   {m:'Material',hazard:'Bahan baku off-spec dari supplier',impact:'Produk akhir tidak memenuhi spesifikasi',domains:['Quality'],ippi:true,note:'ICV PET polymer'},
-  {m:'Material',hazard:'Kontaminasi silang antar material',impact:'Degradasi kualitas produk',domains:['Quality'],ippi:true,note:''},
-  {m:'Material',hazard:'Penyimpanan bahan kimia tidak sesuai MSDS',impact:'Reaksi berbahaya, degradasi bahan',domains:['HSE','Quality'],ippi:true,note:''},
-  {m:'Material',hazard:'Bahan mudah terbakar di area tidak aman',impact:'Kebakaran, ledakan',domains:['HSE'],ippi:true,note:'Solar, gas NG, pelarut'},
   {m:'Material',hazard:'Limbah B3 tidak terkelola dengan benar',impact:'Pencemaran lingkungan, sanksi regulasi',domains:['Environment','Compliance'],ippi:true,note:'Fly ash, sludge, spent catalyst'},
-  {m:'Material',hazard:'Reagen / bahan kimia laboratorium expired',impact:'Hasil analisis tidak akurat',domains:['Quality','Measurement'],ippi:true,note:''},
-  {m:'Material',hazard:'Material tidak berlabel / MSDS tidak tersedia',impact:'Handling tidak aman, risiko paparan',domains:['HSE'],ippi:true,note:''},
+  {m:'Material',hazard:'Bahan mudah terbakar di area tidak aman',impact:'Kebakaran, ledakan',domains:['HSE'],ippi:true,note:'Solar, gas NG, pelarut'},
   {m:'Material',hazard:'Variasi kualitas batubara (kadar abu, kalori)',impact:'Pembakaran tidak stabil, emisi berfluktuasi',domains:['Operational','Environment','Quality'],ippi:true,note:'Relevan CFH'},
-  {m:'Material',hazard:'Reagen/nutrien proses kehabisan stock (WWT)',impact:'Proses biologis anaerob terganggu',domains:['Operational'],ippi:true,note:'Urea, cobalt acetate, EM4'},
-  {m:'Material',hazard:'Kemasan / wadah bahan rusak saat penerimaan',impact:'Tumpahan, kontaminasi produk',domains:['HSE','Quality'],ippi:false,note:''},
-  {m:'Material',hazard:'Bahan pendingin (CW treatment) habis',impact:'Biofouling, korosi sistem cooling water',domains:['Operational','Quality'],ippi:true,note:''},
-  {m:'Material',hazard:'Spare part tidak original / tidak sesuai spesifikasi',impact:'Kegagalan dini peralatan',domains:['Operational','HSE'],ippi:false,note:''},
   {m:'Material',hazard:'Debu proses tidak terkendali (silika, batubara, fly ash)',impact:'Gangguan pernapasan, pencemaran udara',domains:['HSE','Environment'],ippi:true,note:''},
   {m:'Material',hazard:'Biofilm / Legionella di sistem cooling water',impact:'Penyakit Legionnaires, fouling sistem',domains:['HSE','Quality'],ippi:true,note:''},
-  // METHOD
+  {m:'Material',hazard:'Reagen/nutrien proses kehabisan stock (WWT)',impact:'Proses biologis anaerob terganggu',domains:['Operational'],ippi:true,note:'Urea, cobalt acetate, EM4'},
+  {m:'Material',hazard:'Bahan pendingin (CW treatment) habis',impact:'Biofouling, korosi sistem cooling water',domains:['Operational','Quality'],ippi:true,note:''},
+  {m:'Material',hazard:'Material tidak berlabel / MSDS tidak tersedia',impact:'Handling tidak aman, risiko paparan',domains:['HSE'],ippi:true,note:''},
   {m:'Method',hazard:'Prosedur kerja tidak tersedia / tidak update',impact:'Operator bekerja berdasarkan ingatan',domains:['HSE','Quality'],ippi:true,note:''},
   {m:'Method',hazard:'Urutan pekerjaan salah (sequence error)',impact:'Kerusakan peralatan, hasil tidak sesuai',domains:['Operational','Quality','HSE'],ippi:true,note:'Startup/shutdown sequence'},
-  {m:'Method',hazard:'Metode sampling / pengujian tidak terstandarisasi',impact:'Data tidak reproducible, keputusan salah',domains:['Quality','Measurement'],ippi:true,note:''},
-  {m:'Method',hazard:'Prosedur darurat (ERP) tidak jelas / tidak tersedia',impact:'Respons lambat saat insiden',domains:['HSE'],ippi:true,note:''},
   {m:'Method',hazard:'Work permit (PTW / LOTO) tidak dijalankan benar',impact:'Pekerjaan berbahaya tanpa kontrol memadai',domains:['HSE'],ippi:true,note:''},
   {m:'Method',hazard:'Manajemen perubahan (MOC) tidak diterapkan',impact:'Modifikasi tanpa analisis risiko',domains:['HSE','Quality','Operational'],ippi:true,note:''},
   {m:'Method',hazard:'Jadwal preventive maintenance tidak dipatuhi',impact:'Kegagalan peralatan tidak terduga',domains:['Operational','HSE'],ippi:true,note:''},
-  {m:'Method',hazard:'Root cause analysis tidak tuntas / stop di symptom',impact:'Masalah berulang (recurring failure)',domains:['Quality','Operational'],ippi:true,note:''},
-  {m:'Method',hazard:'FIFO tidak diterapkan pada bahan / spare part',impact:'Material expired digunakan',domains:['Quality'],ippi:false,note:''},
-  {m:'Method',hazard:'Metode dosing kimia tidak tepat (manual vs auto)',impact:'Over/under dosing, proses tidak stabil',domains:['Quality','Operational'],ippi:true,note:'WWT chemical dosing'},
-  {m:'Method',hazard:'Cleaning / housekeeping tidak terjadwal',impact:'Kontaminasi, kondisi 6S buruk',domains:['Quality','HSE'],ippi:true,note:''},
+  {m:'Method',hazard:'Root cause analysis tidak tuntas',impact:'Masalah berulang (recurring failure)',domains:['Quality','Operational'],ippi:true,note:''},
+  {m:'Method',hazard:'Metode dosing kimia tidak tepat',impact:'Over/under dosing, proses tidak stabil',domains:['Quality','Operational'],ippi:true,note:'WWT chemical dosing'},
   {m:'Method',hazard:'Tidak ada prosedur confined space entry',impact:'Asfiksia, kecelakaan fatal',domains:['HSE'],ippi:true,note:''},
   {m:'Method',hazard:'Inspeksi rutin tidak terdokumentasi',impact:'Kondisi degradasi tidak terdeteksi',domains:['Operational','HSE'],ippi:true,note:''},
-  {m:'Method',hazard:'Metode kalibrasi instrumen tidak tepat / tidak terstandar',impact:'Pembacaan sistematis salah',domains:['Quality','Measurement'],ippi:true,note:''},
-  {m:'Method',hazard:'Tidak ada sistem traceability produk',impact:'Recall tidak bisa dilakukan',domains:['Quality','Compliance'],ippi:false,note:''},
-  // MEASUREMENT
+  {m:'Method',hazard:'Prosedur darurat (ERP) tidak jelas / tidak tersedia',impact:'Respons lambat saat insiden',domains:['HSE'],ippi:true,note:''},
   {m:'Measurement',hazard:'Instrumen tidak terkalibrasi / kalibrasi expired',impact:'Data proses tidak valid, produk off-spec',domains:['Quality','Measurement'],ippi:true,note:''},
   {m:'Measurement',hazard:'Frekuensi monitoring tidak memadai',impact:'Kondisi abnormal terlambat terdeteksi',domains:['Operational','HSE','Quality'],ippi:true,note:''},
-  {m:'Measurement',hazard:'Titik pengukuran tidak representatif',impact:'Data tidak mencerminkan kondisi aktual',domains:['Quality','Measurement'],ippi:true,note:'Posisi probe/sensor salah'},
-  {m:'Measurement',hazard:'Sistem data logging gagal / downtime',impact:'Rekaman proses hilang, audit tidak bisa dilakukan',domains:['Compliance','Quality'],ippi:false,note:''},
   {m:'Measurement',hazard:'Batas alarm (high/low) tidak di-set dengan benar',impact:'Respons terlambat terhadap kondisi berbahaya',domains:['HSE','Operational'],ippi:true,note:''},
-  {m:'Measurement',hazard:'Metode analisis laboratorium tidak tervalidasi',impact:'Hasil analisis tidak dapat dipercaya',domains:['Quality'],ippi:true,note:''},
-  {m:'Measurement',hazard:'Variasi antar analis laboratorium (repeatability rendah)',impact:'Data tidak konsisten lintas shift',domains:['Quality'],ippi:true,note:'MSA / Gage R&R'},
-  {m:'Measurement',hazard:'Indikator KPI tidak mencerminkan kinerja nyata',impact:'Keputusan manajemen keliru',domains:['Operational'],ippi:false,note:''},
   {m:'Measurement',hazard:'Sensor fouled / terblokir (level sensor, pH probe)',impact:'Pembacaan menyimpang tanpa diketahui',domains:['Quality','Operational'],ippi:true,note:''},
   {m:'Measurement',hazard:'Emisi cerobong tidak dipantau secara kontinu (CEMS)',impact:'Potensi pelanggaran baku mutu lingkungan',domains:['Environment','Compliance'],ippi:true,note:'Relevan CFH'},
-  {m:'Measurement',hazard:'SPC / kontrol statistik tidak diterapkan',impact:'Variasi proses tidak terdeteksi dini',domains:['Quality'],ippi:false,note:'Control chart, Cp, Cpk'},
-  {m:'Measurement',hazard:'Data pengujian tidak diarsipkan dengan baik',impact:'Tidak ada bukti kualitas, audit gagal',domains:['Quality','Compliance'],ippi:true,note:''},
   {m:'Measurement',hazard:'pH meter / DO meter tidak dirawat',impact:'Pengendalian WWT tidak akurat',domains:['Quality','Operational'],ippi:true,note:''},
-  {m:'Measurement',hazard:'Pengukuran kebisingan / getaran tidak dilakukan rutin',impact:'Paparan tak terpantau, hearing loss',domains:['HSE'],ippi:true,note:''},
-  {m:'Measurement',hazard:'Traceability ke standar nasional (SNSU) tidak ada',impact:'Ketidaksesuaian sertifikasi ISO',domains:['Quality','Compliance'],ippi:false,note:''},
-  // MILIEU
+  {m:'Measurement',hazard:'Variasi antar analis laboratorium (repeatability rendah)',impact:'Data tidak konsisten lintas shift',domains:['Quality'],ippi:true,note:'MSA / Gage R&R'},
+  {m:'Measurement',hazard:'Data pengujian tidak diarsipkan dengan baik',impact:'Tidak ada bukti kualitas, audit gagal',domains:['Quality','Compliance'],ippi:true,note:''},
+  {m:'Measurement',hazard:'Titik pengukuran tidak representatif',impact:'Data tidak mencerminkan kondisi aktual',domains:['Quality','Measurement'],ippi:true,note:''},
+  {m:'Measurement',hazard:'Metode analisis laboratorium tidak tervalidasi',impact:'Hasil analisis tidak dapat dipercaya',domains:['Quality'],ippi:true,note:''},
   {m:'Milieu',hazard:'Temperatur lingkungan kerja ekstrem (panas)',impact:'Heat stress, penurunan konsentrasi operator',domains:['HSE'],ippi:true,note:'Area CFH, boiler, utility'},
   {m:'Milieu',hazard:'Kebisingan tinggi dari mesin / blower / kompressor',impact:'Gangguan pendengaran (NIHL)',domains:['HSE'],ippi:true,note:''},
-  {m:'Milieu',hazard:'Pencahayaan tidak memadai di area kerja',impact:'Kesalahan baca, kecelakaan tersandung',domains:['HSE','Quality'],ippi:true,note:''},
-  {m:'Milieu',hazard:'Tata letak area kerja buruk / 6S tidak terjaga',impact:'Tersandung, tumpahan tidak tertangani',domains:['HSE','Quality'],ippi:true,note:''},
+  {m:'Milieu',hazard:'Lantai licin (genangan air / minyak / sludge)',impact:'Terpeleset, jatuh, cedera serius',domains:['HSE'],ippi:true,note:''},
   {m:'Milieu',hazard:'Ventilasi area kurang (ruang terbatas / tertutup)',impact:'Akumulasi gas berbahaya, heat stress',domains:['HSE'],ippi:true,note:'Confined space'},
   {m:'Milieu',hazard:'Cuaca ekstrem (hujan deras, petir, angin kencang)',impact:'Kecelakaan di area outdoor, gangguan proses',domains:['HSE','Operational'],ippi:true,note:'Area unloading batubara'},
-  {m:'Milieu',hazard:'Lantai licin (genangan air / minyak / sludge)',impact:'Terpeleset, jatuh, cedera serius',domains:['HSE'],ippi:true,note:''},
-  {m:'Milieu',hazard:'Budaya keselamatan rendah (safety culture lemah)',impact:'Toleransi terhadap perilaku tidak aman',domains:['HSE'],ippi:false,note:''},
-  {m:'Milieu',hazard:'Tekanan waktu / target produksi tidak realistis',impact:'Shortcut prosedur keselamatan',domains:['HSE','Quality'],ippi:false,note:''},
+  {m:'Milieu',hazard:'Tata letak area kerja buruk / 6S tidak terjaga',impact:'Tersandung, tumpahan tidak tertangani',domains:['HSE','Quality'],ippi:true,note:''},
   {m:'Milieu',hazard:'Regulasi lingkungan berubah tanpa dipantau',impact:'Ketidakpatuhan tidak disadari',domains:['Compliance','Environment'],ippi:true,note:'PP, Permen LH, SNI'},
-  {m:'Milieu',hazard:'Area kerja sempit / akses terbatas',impact:'Evakuasi sulit, kerja dengan posisi berbahaya',domains:['HSE'],ippi:true,note:''},
   {m:'Milieu',hazard:'Manajemen kontraktor tidak terstandarisasi',impact:'Perilaku tidak aman dari pihak ketiga',domains:['HSE'],ippi:true,note:''},
   {m:'Milieu',hazard:'Tidak ada sistem pelaporan near miss',impact:'Kejadian hampir celaka tidak dipelajari',domains:['HSE'],ippi:true,note:''},
   {m:'Milieu',hazard:'Pembuangan limbah cair tidak sesuai regulasi',impact:'Pencemaran badan air, sanksi KLHK',domains:['Environment','Compliance'],ippi:true,note:'Outlet WWT ke laut Ciwandan'},
-  {m:'Milieu',hazard:'Perubahan shift mendadak / kekurangan personel',impact:'Operator kelelahan, pengawasan berkurang',domains:['HSE','Operational'],ippi:false,note:''}
+  {m:'Milieu',hazard:'Area kerja sempit / akses terbatas',impact:'Evakuasi sulit, kerja dengan posisi berbahaya',domains:['HSE'],ippi:true,note:''},
+  {m:'Milieu',hazard:'Budaya keselamatan rendah (safety culture lemah)',impact:'Toleransi terhadap perilaku tidak aman',domains:['HSE'],ippi:false,note:''}
 ];
 
-// ─── STATE ───
-let currentUser = null;
-let activeTab = 'dashboard';
-let hazidData = [];
-let libData = [];
-let libSeeded = false;
-let hazidSeeded = false;
-let filt = {section:'all',rr:'all',sig:'all',m6:'all',search:''};
-let libFilter = {m:'Man',search:'',domain:'all'};
-let formRC = [];
-let charts = {};
+// ── STATE ──
+let user=null,activeModule='f020',activeTab='dashboard';
+let hazidData=[],libData=[],f021Data=[];
+let seeded={hazid:false,lib:false,f021:false};
+let filt={section:'all',rr:'all',sig:'all',m6:'all',search:''};
+let filt21={section:'all',rr:'all',program:'all',search:''};
+let libFilt={m:'Man',search:'',domain:'all'};
+let formRC=[],charts={};
 
-// ─── AUTH ───
-window.loginGoogle = async () => {
-  try {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-  } catch(e) { showToast('Login gagal: '+e.message,'error'); }
-};
+// ── AUTH ──
+window.loginGoogle=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider());}catch(e){toast('Login gagal: '+e.message,'err');}};
+window.logout=async()=>{await signOut(auth);document.getElementById('authScreen').style.display='flex';document.getElementById('app').style.display='none';};
 
-window.logout = async () => {
-  await signOut(auth);
-  document.getElementById('authScreen').style.display='flex';
-  document.getElementById('app').style.display='none';
-};
-
-onAuthStateChanged(auth, user => {
-  if(user){
-    currentUser = user;
+onAuthStateChanged(auth,u=>{
+  if(u){user=u;
     document.getElementById('authScreen').style.display='none';
     document.getElementById('app').style.display='flex';
-    document.getElementById('userName').textContent = user.displayName?.split(' ')[0]||'User';
-    document.getElementById('userAvatar').src = user.photoURL||'';
+    document.getElementById('userName').textContent=u.displayName?.split(' ')[0]||'User';
+    document.getElementById('userAvatar').src=u.photoURL||'';
     initData();
-  } else {
-    document.getElementById('authScreen').style.display='flex';
-    document.getElementById('app').style.display='none';
-  }
+  }else{document.getElementById('authScreen').style.display='flex';document.getElementById('app').style.display='none';}
 });
 
-// ─── FIRESTORE ───
 async function initData(){
-  // Listen HAZID
-  const hq = query(collection(db,'hazid'), orderBy('createdAt','asc'));
-  onSnapshot(hq, snap => {
-    const fresh = snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(fresh.length===0 && !hazidSeeded){
-      hazidSeeded=true;
-      seedHazid();
-    } else {
-      hazidData = fresh;
-      if(activeTab==='dashboard'||activeTab==='viewer') render();
-    }
+  onSnapshot(query(collection(db,'hazid'),orderBy('createdAt','asc')),snap=>{
+    const d=snap.docs.map(x=>({id:x.id,...x.data()}));
+    if(d.length===0&&!seeded.hazid){seeded.hazid=true;SEED_HAZID.forEach(h=>addDoc(collection(db,'hazid'),{...h,createdAt:serverTimestamp(),createdBy:user.email}));}
+    else{hazidData=d;document.getElementById('badgeF020').textContent=d.length;if(['dashboard','viewer','input'].includes(activeTab))render();}
   });
-  // Listen Library
-  const lq = query(collection(db,'library6m'), orderBy('createdAt','asc'));
-  onSnapshot(lq, snap => {
-    const fresh = snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(fresh.length===0 && !libSeeded){
-      libSeeded=true;
-      seedLibrary();
-    } else {
-      libData = fresh;
-      if(activeTab==='library'||activeTab==='input') render();
-    }
+  onSnapshot(query(collection(db,'library6m'),orderBy('createdAt','asc')),snap=>{
+    const d=snap.docs.map(x=>({id:x.id,...x.data()}));
+    if(d.length===0&&!seeded.lib){seeded.lib=true;SEED_LIB.forEach(l=>addDoc(collection(db,'library6m'),{...l,isDefault:true,createdAt:serverTimestamp(),createdBy:'system'}));}
+    else{libData=d;if(['library','input'].includes(activeTab))render();}
+  });
+  onSnapshot(query(collection(db,'f021'),orderBy('createdAt','asc')),snap=>{
+    const d=snap.docs.map(x=>({id:x.id,...x.data()}));
+    if(d.length===0&&!seeded.f021){seeded.f021=true;SEED_F021.forEach(f=>addDoc(collection(db,'f021'),{...f,createdAt:serverTimestamp(),createdBy:user.email}));}
+    else{f021Data=d;document.getElementById('badgeF021').textContent=d.length;if(activeTab.startsWith('f021'))render();}
   });
 }
 
-async function seedHazid(){
-  for(const h of SEED_HAZID){
-    await addDoc(collection(db,'hazid'),{...h,createdAt:serverTimestamp(),createdBy:currentUser.email});
-  }
-}
-
-async function seedLibrary(){
-  for(const l of SEED_LIB){
-    await addDoc(collection(db,'library6m'),{...l,isDefault:true,createdAt:serverTimestamp(),createdBy:'system'});
-  }
-}
-
-// ─── NAVIGATION ───
-window.showTab = (t) => {
-  activeTab = t;
-  document.querySelectorAll('#mainNav button').forEach((b,i)=>{
-    b.classList.toggle('active',['dashboard','viewer','input','library'][i]===t);
-  });
-  formRC = [];
+// ── NAV ──
+window.setModule=m=>{
+  activeModule=m;
+  document.getElementById('modF020').classList.toggle('active',m==='f020');
+  document.getElementById('modF021').classList.toggle('active',m==='f021');
+  document.getElementById('navF020').style.display=m==='f020'?'flex':'none';
+  document.getElementById('navF021').style.display=m==='f021'?'flex':'none';
+  activeTab=m==='f020'?'dashboard':'f021dash';
   render();
+};
+
+window.showTab=t=>{
+  activeTab=t;
+  const nav=document.getElementById(activeModule==='f020'?'navF020':'navF021');
+  nav.querySelectorAll('button').forEach((b,i)=>{
+    const tabs=activeModule==='f020'?['dashboard','viewer','input','library']:['f021dash','f021list','f021input'];
+    b.classList.toggle('active',tabs[i]===t);
+  });
+  formRC=[];render();
 };
 
 function render(){
   destroyCharts();
-  const c = document.getElementById('mainContent');
-  if(activeTab==='dashboard') c.innerHTML = renderDash();
-  else if(activeTab==='viewer') c.innerHTML = renderViewer();
-  else if(activeTab==='input') c.innerHTML = renderInput();
-  else c.innerHTML = renderLibrary();
+  const c=document.getElementById('mainContent');
+  if(activeTab==='dashboard')c.innerHTML=renderDash();
+  else if(activeTab==='viewer')c.innerHTML=renderViewer();
+  else if(activeTab==='input')c.innerHTML=renderInput();
+  else if(activeTab==='library')c.innerHTML=renderLibrary();
+  else if(activeTab==='f021dash')c.innerHTML=renderF021Dash();
+  else if(activeTab==='f021list')c.innerHTML=renderF021List();
+  else if(activeTab==='f021input')c.innerHTML=renderF021Input();
 }
 
-function destroyCharts(){
-  Object.values(charts).forEach(ch=>{ try{ch.destroy();}catch(e){} });
-  charts = {};
-}
+function destroyCharts(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};}
 
-// ─── HELPERS ───
-function rrBadge(rr){
-  if(!rr)return'';
-  const m={'EHS-1':'ehs1','EHS-2':'ehs2','EHS-3':'ehs3','EHS-4':'ehs4'};
-  return `<span class="badge b-${m[rr]||'ehs2'}">${rr}</span>`;
-}
-function sigBadge(s){
-  if(!s)return'';
-  return `<span class="badge b-${s==='S'?'sig':'nsig'}">${s==='S'?'Significant':'Non-Sig'}</span>`;
-}
-function domBadge(d){
-  const st=DOMAIN_STYLE[d]||'background:#F1EFE8;color:#5F5E5A';
-  return `<span class="b-domain" style="${st}">${d}</span>`;
-}
+// ── HELPERS ──
+function rrB(rr){if(!rr)return'';const m={'EHS-1':'ehs1','EHS-2':'ehs2','EHS-3':'ehs3','EHS-4':'ehs4'};return`<span class="badge b-${m[rr]||'ehs2'}">${rr}</span>`;}
+function sigB(s){if(!s)return'';return`<span class="badge b-${s==='S'?'sig':'nsig'}">${s==='S'?'Significant':'Non-Sig'}</span>`;}
+function domB(d){const st=DS[d]||'background:#F1EFE8;color:#5F5E5A';return`<span class="b-dom" style="${st}">${d}</span>`;}
 function rcChips(rc){
   if(!rc)return'';
   return rc.split(',').filter(Boolean).map(id=>{
-    const it=libData.find(l=>l.id===id.trim());
-    if(!it)return'';
-    const c=M6_COLORS[it.m]||'#888';
-    const bg=M6_BG[it.m]||'#eee';
-    return `<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:100px;font-size:10px;font-weight:500;background:${bg};color:${c};margin:1px;border:1px solid ${c}22" title="${it.impact}"><i class="ti ${M6_ICONS[it.m]||'ti-circle'}" style="font-size:9px"></i>${it.m.slice(0,2)}: ${it.hazard.slice(0,28)}${it.hazard.length>28?'…':''}</span>`;
+    const it=libData.find(l=>l.id===id.trim());if(!it)return'';
+    return`<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:100px;font-size:10px;font-weight:500;background:${MB[it.m]};color:${MC[it.m]};margin:1px;border:1px solid ${MC[it.m]}22" title="${it.impact}"><i class="ti ${MI[it.m]}" style="font-size:9px"></i>${it.m.slice(0,2)}: ${it.hazard.slice(0,26)}…</span>`;
   }).join('');
 }
+function ctrlChips(c){
+  if(!c)return'';
+  return c.split(',').filter(Boolean).map(n=>{const l=CTRL[n.trim()];return l?`<span style="display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:10px;margin:1px">${n.trim()}. ${l.slice(0,24)}</span>`:''}).join('');
+}
 
-// ─── DASHBOARD ───
+// ─────────────── F020 DASHBOARD ───────────────
 function renderDash(){
-  const all = hazidData;
-  const lib = libData;
-  const ehs3 = all.filter(d=>d.rr==='EHS-3').length;
-  const ehs4 = all.filter(d=>d.rr==='EHS-4').length;
-  const sig = all.filter(d=>d.sig==='S').length;
+  const all=hazidData,lib=libData;
+  const mC={Man:0,Machine:0,Material:0,Method:0,Measurement:0,Milieu:0};
+  all.forEach(d=>{if(d.rootCause)d.rootCause.split(',').forEach(id=>{const it=lib.find(l=>l.id===id.trim());if(it&&mC[it.m]!==undefined)mC[it.m]++;});});
+  const secs=[...new Set(all.map(d=>d.section))];
+  const bySec=secs.map(s=>({s,h:all.filter(d=>d.section===s&&(d.rr==='EHS-3'||d.rr==='EHS-4')).length,n:all.filter(d=>d.section===s).length}));
+  const ehs34=all.filter(d=>d.rr==='EHS-3'||d.rr==='EHS-4').length;
+  const sig=all.filter(d=>d.sig==='S').length;
 
-  const mCounts={Man:0,Machine:0,Material:0,Method:0,Measurement:0,Milieu:0};
-  all.forEach(d=>{
-    if(d.rootCause) d.rootCause.split(',').forEach(id=>{
-      const it=lib.find(l=>l.id===id.trim());
-      if(it && mCounts[it.m]!==undefined) mCounts[it.m]++;
-    });
-  });
-
-  const sections=[...new Set(all.map(d=>d.section))];
-  const sBySec=sections.map(s=>({s,h:all.filter(d=>d.section===s&&(d.rr==='EHS-3'||d.rr==='EHS-4')).length,n:all.filter(d=>d.section===s).length}));
+  // F021 summary
+  const mitigated=f021Data.filter(d=>d.residualRR==='EHS-1'||d.residualRR==='EHS-2').length;
 
   const html=`
+<div class="flow-banner">
+  <div class="flow-step"><div class="fs-num" style="background:var(--blue-lt);color:var(--blue)">1</div><div><div style="font-size:11px;font-weight:600;color:var(--blue)">F020 — Identifikasi</div><div style="font-size:11px;color:var(--text2)">${all.length} bahaya teridentifikasi</div></div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step"><div class="fs-num" style="background:var(--amber-lt);color:var(--amber)">2</div><div><div style="font-size:11px;font-weight:600;color:var(--amber)">Filter High Risk</div><div style="font-size:11px;color:var(--text2)">${ehs34} entri EHS-3/4 masuk F021</div></div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step"><div class="fs-num" style="background:var(--teal-lt);color:var(--teal)">3</div><div><div style="font-size:11px;font-weight:600;color:var(--teal)">F021 — Pengendalian</div><div style="font-size:11px;color:var(--text2)">${f021Data.length} entri, ${mitigated} residual risk turun</div></div></div>
+</div>
 <div class="stats-grid">
-  <div class="stat-card"><div class="label">Total entri HAZID</div><div class="value">${all.length}</div><div class="sub">dari semua section</div></div>
-  <div class="stat-card danger"><div class="label">High + Kritis (EHS-3/4)</div><div class="value">${ehs3+ehs4}</div><div class="sub">${ehs4} kritis (EHS-4)</div></div>
-  <div class="stat-card warn"><div class="label">Significant impact</div><div class="value">${sig}</div><div class="sub">perlu tindak lanjut</div></div>
-  <div class="stat-card info"><div class="label">Library 6M</div><div class="value">${lib.length}</div><div class="sub">entri root cause</div></div>
+  <div class="sc"><div class="sl">Total HAZID (F020)</div><div class="sv">${all.length}</div><div class="ss">semua section</div></div>
+  <div class="sc danger"><div class="sl">High + Kritis</div><div class="sv">${ehs34}</div><div class="ss">EHS-3 & EHS-4</div></div>
+  <div class="sc warn"><div class="sl">Significant impact</div><div class="sv">${sig}</div><div class="ss">perlu tindak lanjut</div></div>
+  <div class="sc success"><div class="sl">Risiko dimitigasi (F021)</div><div class="sv">${mitigated}</div><div class="ss">residual ≤ EHS-2</div></div>
 </div>
-
-<div class="m6-summary">
-${Object.entries(mCounts).map(([m,n])=>`
-<div class="m6-card">
-  <div class="m6-icon"><i class="ti ${M6_ICONS[m]}" style="color:${M6_COLORS[m]}"></i></div>
-  <div class="m6-name" style="color:${M6_COLORS[m]}">${m}</div>
-  <div class="m6-count" style="color:${M6_COLORS[m]}">${n}</div>
-  <div class="m6-sub">referensi</div>
-</div>`).join('')}
-</div>
-
 <div class="chart-grid">
-  <div class="chart-card">
-    <h3>Root cause dominan (6M)</h3>
-    <div class="chart-wrap"><canvas id="dC1" role="img" aria-label="Bar chart root cause 6M">Data 6M.</canvas></div>
-  </div>
-  <div class="chart-card">
-    <h3>High risk per section</h3>
-    <div class="chart-wrap"><canvas id="dC2" role="img" aria-label="Bar chart high risk per section">Data per section.</canvas></div>
-  </div>
+  <div class="chart-card"><h3>Root cause dominan (6M)</h3><div class="chart-wrap"><canvas id="dC1"></canvas></div></div>
+  <div class="chart-card"><h3>High risk per section</h3><div class="chart-wrap"><canvas id="dC2"></canvas></div></div>
 </div>
-
 <div class="chart-grid">
-  <div class="chart-card">
-    <h3>Distribusi risk level</h3>
-    <div class="chart-wrap" style="height:180px"><canvas id="dC3" role="img" aria-label="Donut risk level">Data risk.</canvas></div>
-  </div>
-  <div class="chart-card">
-    <h3>Distribusi kategori bahaya</h3>
-    <div class="chart-wrap" style="height:180px"><canvas id="dC4" role="img" aria-label="Pie kategori">Data kategori.</canvas></div>
-  </div>
+  <div class="chart-card"><h3>Risk level F020 (sebelum pengendalian tambahan)</h3><div class="chart-wrap" style="height:170px"><canvas id="dC3"></canvas></div></div>
+  <div class="chart-card"><h3>Residual risk F021 (setelah pengendalian tambahan)</h3><div class="chart-wrap" style="height:170px"><canvas id="dC4"></canvas></div></div>
 </div>`;
 
   setTimeout(()=>{
-    const mL=Object.keys(mCounts), mV=Object.values(mCounts), mC=Object.values(M6_COLORS);
+    const mL=Object.keys(mC),mV=Object.values(mC),mCol=Object.values(MC);
     const c1=document.getElementById('dC1');
-    if(c1) charts.c1=new Chart(c1,{type:'bar',data:{labels:mL,datasets:[{label:'Ref.',data:mV,backgroundColor:mC.map(c=>c+'99'),borderColor:mC,borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{stepSize:1},beginAtZero:true}}}});
+    if(c1)charts.c1=new Chart(c1,{type:'bar',data:{labels:mL,datasets:[{data:mV,backgroundColor:mCol.map(c=>c+'99'),borderColor:mCol,borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10}}},y:{ticks:{stepSize:1},beginAtZero:true}}}});
     const c2=document.getElementById('dC2');
-    if(c2) charts.c2=new Chart(c2,{type:'bar',data:{labels:sBySec.map(x=>x.s),datasets:[{label:'High Risk',data:sBySec.map(x=>x.h),backgroundColor:'#A32D2D99',borderColor:'#A32D2D',borderWidth:1.5,borderRadius:4},{label:'Total',data:sBySec.map(x=>x.n),backgroundColor:'#185FA566',borderColor:'#185FA5',borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{font:{size:11},boxWidth:10}}},scales:{x:{ticks:{font:{size:11},autoSkip:false}},y:{ticks:{stepSize:1},beginAtZero:true}}}});
-    const rrMap={'EHS-1':0,'EHS-2':0,'EHS-3':0,'EHS-4':0};
-    all.forEach(d=>{if(rrMap[d.rr]!==undefined)rrMap[d.rr]++;});
+    if(c2)charts.c2=new Chart(c2,{type:'bar',data:{labels:bySec.map(x=>x.s),datasets:[{label:'High Risk',data:bySec.map(x=>x.h),backgroundColor:'#A32D2D99',borderColor:'#A32D2D',borderWidth:1.5,borderRadius:4},{label:'Total',data:bySec.map(x=>x.n),backgroundColor:'#185FA566',borderColor:'#185FA5',borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}}},scales:{x:{ticks:{font:{size:10},autoSkip:false}},y:{ticks:{stepSize:1},beginAtZero:true}}}});
+    const rm={'EHS-1':0,'EHS-2':0,'EHS-3':0,'EHS-4':0};all.forEach(d=>{if(rm[d.rr]!==undefined)rm[d.rr]++;});
     const c3=document.getElementById('dC3');
-    if(c3) charts.c3=new Chart(c3,{type:'doughnut',data:{labels:Object.keys(rrMap),datasets:[{data:Object.values(rrMap),backgroundColor:['#1D9E75','#185FA5','#BA7517','#A32D2D'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11},boxWidth:12}}}}});
-    const catMap={};
-    all.forEach(d=>{const c=d.category||'Other';catMap[c]=(catMap[c]||0)+1;});
+    if(c3)charts.c3=new Chart(c3,{type:'doughnut',data:{labels:Object.keys(rm),datasets:[{data:Object.values(rm),backgroundColor:['#1D9E75','#185FA5','#BA7517','#A32D2D'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:10}}}}});
+    const rr2={'EHS-1':0,'EHS-2':0,'EHS-3':0,'EHS-4':0};f021Data.forEach(d=>{if(rr2[d.residualRR]!==undefined)rr2[d.residualRR]++;});
     const c4=document.getElementById('dC4');
-    if(c4) charts.c4=new Chart(c4,{type:'pie',data:{labels:Object.keys(catMap),datasets:[{data:Object.values(catMap),backgroundColor:['#A32D2D','#7F77DD','#1D9E75','#BA7517','#185FA5','#639922','#D85A30'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11},boxWidth:12}}}}});
+    if(c4)charts.c4=new Chart(c4,{type:'doughnut',data:{labels:Object.keys(rr2),datasets:[{data:Object.values(rr2),backgroundColor:['#1D9E75','#185FA5','#BA7517','#A32D2D'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:10}}}}});
   },100);
-
   return html;
 }
 
-// ─── VIEWER ───
+// ─────────────── F020 VIEWER ───────────────
 function renderViewer(){
-  const sections=[...new Set(hazidData.map(d=>d.section))];
+  const secs=[...new Set(hazidData.map(d=>d.section))];
   let rows=[...hazidData];
-  if(filt.section!=='all') rows=rows.filter(d=>d.section===filt.section);
-  if(filt.rr!=='all') rows=rows.filter(d=>d.rr===filt.rr);
-  if(filt.sig!=='all') rows=rows.filter(d=>d.sig===filt.sig);
-  if(filt.m6!=='all') rows=rows.filter(d=>{
-    if(!d.rootCause)return false;
-    return d.rootCause.split(',').some(id=>{const it=libData.find(l=>l.id===id.trim());return it&&it.m===filt.m6;});
-  });
-  if(filt.search) rows=rows.filter(d=>[d.activity,d.sub,d.hazard,d.consequence,d.section].join(' ').toLowerCase().includes(filt.search.toLowerCase()));
-
-  const secOpts=sections.map(s=>`<option value="${s}" ${filt.section===s?'selected':''}>${s}</option>`).join('');
+  if(filt.section!=='all')rows=rows.filter(d=>d.section===filt.section);
+  if(filt.rr!=='all')rows=rows.filter(d=>d.rr===filt.rr);
+  if(filt.sig!=='all')rows=rows.filter(d=>d.sig===filt.sig);
+  if(filt.m6!=='all')rows=rows.filter(d=>d.rootCause&&d.rootCause.split(',').some(id=>{const it=libData.find(l=>l.id===id.trim());return it&&it.m===filt.m6;}));
+  if(filt.search)rows=rows.filter(d=>[d.activity,d.sub,d.hazard,d.consequence,d.section].join(' ').toLowerCase().includes(filt.search.toLowerCase()));
+  const secOpts=secs.map(s=>`<option value="${s}" ${filt.section===s?'selected':''}>${s}</option>`).join('');
   const trows=rows.map(d=>`<tr>
-    <td><span style="font-size:10px;background:#F5F6F8;padding:2px 6px;border-radius:4px;border:1px solid #E2E4E8;white-space:nowrap">${d.section}</span></td>
-    <td style="max-width:130px;font-size:11px;color:var(--text2)">${d.activity||''}</td>
-    <td style="max-width:160px">${d.sub||''}</td>
-    <td style="max-width:140px;font-weight:500">${d.hazard||''}</td>
-    <td style="max-width:190px">${rcChips(d.rootCause)}</td>
-    <td>${rrBadge(d.rr)}</td>
-    <td>${sigBadge(d.sig)}</td>
-    <td><button class="btn-del" onclick="deleteHazid('${d.id}')" title="Hapus entri ini"><i class="ti ti-trash"></i></button></td>
+    <td><span style="font-size:10px;background:var(--bg);padding:2px 6px;border-radius:4px;border:1px solid var(--border)">${d.section}</span></td>
+    <td style="font-size:11px;color:var(--text2);max-width:110px">${d.activity||''}</td>
+    <td style="max-width:150px">${d.sub||''}</td>
+    <td style="max-width:130px;font-weight:500">${d.hazard||''}</td>
+    <td style="max-width:170px">${rcChips(d.rootCause)}</td>
+    <td>${rrB(d.rr)}</td><td>${sigB(d.sig)}</td>
+    <td><button class="btn-del" onclick="delHazid('${d.id}')"><i class="ti ti-trash"></i></button></td>
   </tr>`).join('');
-
-  return `
+  return`
 <div class="toolbar">
   <select onchange="filt.section=this.value;render()"><option value="all">Semua section</option>${secOpts}</select>
-  <select onchange="filt.rr=this.value;render()"><option value="all">Semua risk level</option><option>EHS-1</option><option>EHS-2</option><option>EHS-3</option><option>EHS-4</option></select>
-  <select onchange="filt.sig=this.value;render()"><option value="all">Semua signifikansi</option><option value="S">Significant</option><option value="NS">Non-Significant</option></select>
+  <select onchange="filt.rr=this.value;render()"><option value="all">Semua risk</option><option>EHS-1</option><option>EHS-2</option><option>EHS-3</option><option>EHS-4</option></select>
+  <select onchange="filt.sig=this.value;render()"><option value="all">Semua sig.</option><option value="S">Significant</option><option value="NS">Non-Sig</option></select>
   <select onchange="filt.m6=this.value;render()"><option value="all">Semua 6M</option><option>Man</option><option>Machine</option><option>Material</option><option>Method</option><option>Measurement</option><option>Milieu</option></select>
-  <input type="text" placeholder="Cari hazard, aktivitas, section..." value="${filt.search}" oninput="filt.search=this.value;render()">
-  <span class="count">${rows.length} entri</span>
+  <input type="text" placeholder="Cari..." value="${filt.search}" oninput="filt.search=this.value;render()">
+  <span class="cnt">${rows.length} entri</span>
 </div>
-<div class="table-wrap">
-<div class="table-scroll">
-<table>
-<thead><tr><th>Section</th><th>Aktivitas</th><th>Sub-aktivitas</th><th>Hazard / Aspek</th><th>Root cause (6M)</th><th>Risk</th><th>Sig.</th><th></th></tr></thead>
-<tbody>${trows||'<tr><td colspan="8"><div class="empty"><i class="ti ti-inbox-off"></i><p>Tidak ada data yang sesuai filter</p></div></td></tr>'}</tbody>
-</table>
-</div>
-</div>`;
+<div class="tbl-wrap"><div class="tbl-scroll"><table>
+<thead><tr><th>Section</th><th>Aktivitas</th><th>Sub-aktivitas</th><th>Hazard</th><th>Root cause (6M)</th><th>Risk</th><th>Sig.</th><th></th></tr></thead>
+<tbody>${trows||'<tr><td colspan="8"><div class="empty"><i class="ti ti-inbox-off"></i><p>Tidak ada data</p></div></td></tr>'}</tbody>
+</table></div></div>`;
 }
+window.delHazid=async id=>{if(!confirm('Hapus entri ini?'))return;try{await deleteDoc(doc(db,'hazid',id));toast('Entri dihapus');}catch(e){toast('Gagal: '+e.message,'err');}};
 
-window.deleteHazid = async (id) => {
-  if(!confirm('Hapus entri HAZID ini?')) return;
-  try {
-    await deleteDoc(doc(db,'hazid',id));
-    showToast('Entri dihapus');
-  } catch(e){ showToast('Gagal menghapus: '+e.message,'error'); }
-};
-
-// ─── INPUT ───
+// ─────────────── F020 INPUT ───────────────
 function renderInput(){
   const lib=libData;
   const mGroups={Man:[],Machine:[],Material:[],Method:[],Measurement:[],Milieu:[]};
   lib.forEach(it=>{if(mGroups[it.m])mGroups[it.m].push(it);});
-
-  const panelChips=Object.entries(mGroups).map(([m,items])=>items.length?`
-<div class="m6-section">
-  <div class="m6-section-title" style="color:${M6_COLORS[m]}">
-    <i class="ti ${M6_ICONS[m]}"></i>${m} <span style="font-weight:400;color:var(--text3)">(${items.length})</span>
-  </div>
-  <div>${items.map(it=>`<span class="chip ${formRC.includes(it.id)?'selected':''}" onclick="toggleRC('${it.id}')" title="${it.impact}">
-    ${it.ippi?'<span class="star">★</span>':''} ${it.hazard.slice(0,38)}${it.hazard.length>38?'…':''}
-  </span>`).join('')}</div>
+  const panelHtml=Object.entries(mGroups).map(([m,items])=>items.length?`
+<div class="m6sec">
+  <div class="m6sec-title" style="color:${MC[m]}"><i class="ti ${MI[m]}"></i>${m} <span style="font-weight:400;color:var(--text3)">(${items.length})</span></div>
+  <div>${items.map(it=>`<span class="chip ${formRC.includes(it.id)?'sel':''}" onclick="toggleRC('${it.id}')" title="${it.impact}">${it.ippi?'★ ':''} ${it.hazard.slice(0,36)}${it.hazard.length>36?'…':''}</span>`).join('')}</div>
 </div>`:'').join('');
-
-  const rcSelected=formRC.map(id=>{
-    const it=lib.find(l=>l.id===id);
-    if(!it)return'';
-    const c=M6_COLORS[it.m]||'#888';
-    const bg=M6_BG[it.m]||'#eee';
-    return `<span class="rc-chip" style="background:${bg};color:${c};border-color:${c}33" onclick="toggleRC('${it.id()}')"><i class="ti ${M6_ICONS[it.m]}" style="font-size:10px"></i> ${it.m}: ${it.hazard.slice(0,28)} <i class="ti ti-x" style="font-size:10px;cursor:pointer"></i></span>`;
-  }).join('');
-
-  return `
+  return`
 <div class="form-layout">
   <div>
     <div class="form-card">
-      <h3><i class="ti ti-plus" style="color:var(--blue)"></i> Identifikasi bahaya baru</h3>
-      <div class="form-grid">
-        <div class="fg"><label>Section <span class="req">*</span></label>
-          <select id="fs"><option value="">-- Pilih section --</option><option>WWT</option><option>CFH</option><option>GFH</option><option>PSA</option><option>BOILER</option><option>COOLING WATER</option><option>MATERIAL</option></select></div>
-        <div class="fg"><label>Tipe aktivitas <span class="req">*</span></label>
-          <select id="fa"><option value="">-- Pilih tipe --</option><option>START-UP</option><option>OPERASI NORMAL</option><option>SHUTDOWN</option><option>KEADAAN DARURAT</option><option>PERSIAPAN BAHAN KIMIA</option><option>MAINTENANCE</option><option>LAINNYA</option></select></div>
-        <div class="fg full"><label>Sub-aktivitas / deskripsi pekerjaan <span class="req">*</span></label>
-          <input type="text" id="fsub" placeholder="Contoh: Pengisian limbah ke equalization tank..."></div>
-        <div class="fg full"><label>Hazard / aspek lingkungan <span class="req">*</span></label>
-          <input type="text" id="fhaz" placeholder="Apa yang bisa salah? Bahaya apa yang ada?"></div>
-        <div class="fg full">
-          <label>Root cause terpilih dari library 6M</label>
-          <div class="rc-box" id="rcBox">
-            ${formRC.length===0?'<span class="rc-placeholder">Klik chip di panel kanan untuk menambahkan root cause...</span>':rcSelected}
-          </div>
-          <div class="hint">Pilih satu atau lebih faktor penyebab dari panel 6M di kanan</div>
+      <h3><i class="ti ti-plus" style="color:var(--blue)"></i> Identifikasi bahaya baru (F020)</h3>
+      <div class="fgrid">
+        <div class="fg"><label>Section <span class="req">*</span></label><select id="fs"><option value="">--</option><option>WWT</option><option>CFH</option><option>GFH</option><option>PSA</option><option>BOILER</option><option>COOLING WATER</option><option>MATERIAL</option></select></div>
+        <div class="fg"><label>Tipe aktivitas <span class="req">*</span></label><select id="fa"><option value="">--</option><option>START-UP</option><option>OPERASI NORMAL</option><option>SHUTDOWN</option><option>KEADAAN DARURAT</option><option>PERSIAPAN BAHAN KIMIA</option><option>MAINTENANCE</option></select></div>
+        <div class="fg full"><label>Sub-aktivitas <span class="req">*</span></label><input type="text" id="fsub" placeholder="Deskripsi pekerjaan spesifik"></div>
+        <div class="fg full"><label>Hazard / aspek <span class="req">*</span></label><input type="text" id="fhaz" placeholder="Apa yang bisa salah?"></div>
+        <div class="fg full"><label>Root cause terpilih (6M)</label>
+          <div class="rc-box" id="rcBox"><span class="rc-ph">Klik chip di panel kanan...</span></div>
         </div>
-        <div class="fg full"><label>Konsekuensi / dampak <span class="req">*</span></label>
-          <input type="text" id="fcons" placeholder="Akibat yang paling mungkin terjadi jika hazard tidak dikontrol"></div>
-        <div class="fg"><label>Kategori dampak</label>
-          <select id="fcat"><option>Environment</option><option>Safety</option><option>Health</option><option>Health/Safety</option><option>Operational</option><option>Quality</option><option>Compliance</option><option>Financial</option></select></div>
-        <div class="fg"><label>Kondisi aktivitas</label>
-          <div style="display:flex;flex-wrap:wrap;gap:10px;padding-top:6px">
-            <label style="display:flex;align-items:center;gap:5px;font-weight:400;font-size:13px;cursor:pointer"><input type="checkbox" id="fR"> Routine</label>
-            <label style="display:flex;align-items:center;gap:5px;font-weight:400;font-size:13px;cursor:pointer"><input type="checkbox" id="fNR"> Non-Routine</label>
-            <label style="display:flex;align-items:center;gap:5px;font-weight:400;font-size:13px;cursor:pointer"><input type="checkbox" id="fN"> Normal</label>
-            <label style="display:flex;align-items:center;gap:5px;font-weight:400;font-size:13px;cursor:pointer"><input type="checkbox" id="fA"> Abnormal</label>
-            <label style="display:flex;align-items:center;gap:5px;font-weight:400;font-size:13px;cursor:pointer"><input type="checkbox" id="fE"> Emergency</label>
-          </div>
-        </div>
-        <div class="fg"><label>Severity / SR</label>
-          <select id="fsr" onchange="calcRL()"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
-        <div class="fg"><label>Likelihood / LL</label>
-          <select id="fll" onchange="calcRL()"><option value="">--</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></div>
-        <div class="fg" id="rlBox" style="display:none">
-          <label>Risk level (auto)</label>
-          <div class="risk-preview"><div class="rl-label" id="rlCode"></div><div class="rl-big" id="rlBadge"></div></div>
-        </div>
-        <div class="fg"><label>Signifikansi lingkungan</label>
-          <select id="fsig"><option value="">-</option><option value="S">Significant (S)</option><option value="NS">Non-Significant (NS)</option></select></div>
-        <div class="fg full"><label>Tindakan kontrol yang ada (no. 1–25, pisahkan koma)</label>
-          <input type="text" id="fctrl" placeholder="Contoh: 3,10,14,24" oninput="previewCtrl()">
-          <div id="ctrlPrev" class="hint" style="margin-top:4px"></div></div>
-        <div class="fg full"><label>Peraturan / prosedur terkait</label>
-          <input type="text" id="flegal" placeholder="Contoh: PP 101/2014, Permen.04/Men/1980, IPPI/HSE-L2-009"></div>
-        <div class="fg full" style="display:flex;gap:10px;padding-top:4px">
-          <button class="btn-primary" onclick="submitHazid()"><i class="ti ti-device-floppy"></i> Simpan ke Firestore</button>
-          <button class="btn-secondary" onclick="resetForm()"><i class="ti ti-refresh"></i> Reset</button>
+        <div class="fg full"><label>Konsekuensi / dampak <span class="req">*</span></label><input type="text" id="fcons" placeholder="Akibat jika hazard tidak dikontrol"></div>
+        <div class="fg"><label>Kategori dampak</label><select id="fcat"><option>Environment</option><option>Safety</option><option>Health</option><option>Health/Safety</option><option>Operational</option><option>Quality</option><option>Compliance</option></select></div>
+        <div class="fg"><label>Signifikansi</label><select id="fsig"><option value="">-</option><option value="S">Significant (S)</option><option value="NS">Non-Significant (NS)</option></select></div>
+        <div class="fg"><label>Severity (SR)</label><select id="fsr" onchange="calcRL()"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+        <div class="fg"><label>Likelihood (LL)</label><select id="fll" onchange="calcRL()"><option value="">--</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></div>
+        <div class="fg" id="rlBox" style="display:none"><label>Risk level (auto)</label><div class="rp-box"><div class="rp-lbl" id="rlCode"></div><div class="rp-big" id="rlBadge"></div></div></div>
+        <div class="fg full"><label>Kontrol yang ada (no. 1–25)</label><input type="text" id="fctrl" placeholder="Contoh: 3,10,14,24" oninput="prevCtrl()"><div id="ctrlPrev" class="hint" style="margin-top:3px"></div></div>
+        <div class="fg full"><label>Peraturan terkait</label><input type="text" id="flegal" placeholder="PP, Permen, Prosedur IPPI..."></div>
+        <div class="fg full" style="display:flex;gap:8px;padding-top:4px">
+          <button class="btn-primary" onclick="submitHazid()"><i class="ti ti-device-floppy"></i> Simpan</button>
+          <button class="btn-secondary" onclick="resetF()"><i class="ti ti-refresh"></i> Reset</button>
         </div>
       </div>
     </div>
   </div>
-
   <div class="panel-6m">
-    <h3><i class="ti ti-books" style="color:var(--blue)"></i> Library 6M — Root Cause</h3>
-    <input type="text" class="panel-search" id="panelQ" placeholder="Cari faktor penyebab..." oninput="filterPanel()">
-    <div id="panelContent">${panelChips}</div>
-    <div style="font-size:10px;color:var(--text3);margin-top:8px;line-height:1.6">
-      <i class="ti ti-star" style="color:var(--blue);font-size:10px"></i> = Relevan untuk IPPI.<br>
-      Klik chip untuk pilih/hapus dari form.
-    </div>
+    <h3><i class="ti ti-books" style="color:var(--blue)"></i> Library 6M</h3>
+    <input type="text" class="p-search" id="panelQ" placeholder="Cari faktor penyebab..." oninput="filterPanel()">
+    <div id="panelContent">${panelHtml}</div>
+    <div style="font-size:10px;color:var(--text3);margin-top:6px">★ = Relevan untuk IPPI</div>
   </div>
 </div>`;
 }
 
-window.toggleRC = (id) => {
-  const idx = formRC.indexOf(id);
-  if(idx>=0) formRC.splice(idx,1);
-  else formRC.push(id);
-  updateRCBox();
-  const chips = document.querySelectorAll(`[onclick="toggleRC('${id}')"]`);
-  chips.forEach(c=>c.classList.toggle('selected',formRC.includes(id)));
-};
+window.toggleRC=id=>{const i=formRC.indexOf(id);if(i>=0)formRC.splice(i,1);else formRC.push(id);updateRCBox();document.querySelectorAll(`.chip[onclick="toggleRC('${id}')"]`).forEach(c=>c.classList.toggle('sel',formRC.includes(id)));};
+function updateRCBox(){const b=document.getElementById('rcBox');if(!b)return;b.innerHTML='';if(!formRC.length){b.innerHTML='<span class="rc-ph">Klik chip di panel kanan...</span>';return;}formRC.forEach(id=>{const it=libData.find(l=>l.id===id);if(!it)return;const s=document.createElement('span');s.className='rc-chip';s.style=`background:${MB[it.m]};color:${MC[it.m]};border-color:${MC[it.m]}33`;s.innerHTML=`<i class="ti ${MI[it.m]}" style="font-size:10px"></i> ${it.m}: ${it.hazard.slice(0,24)}… <i class="ti ti-x" style="font-size:9px"></i>`;s.onclick=()=>toggleRC(id);b.appendChild(s);});}
+window.filterPanel=()=>{const q=(document.getElementById('panelQ')?.value||'').toLowerCase();const lib=libData;const mg={Man:[],Machine:[],Material:[],Method:[],Measurement:[],Milieu:[]};lib.filter(it=>!q||it.hazard.toLowerCase().includes(q)||it.m.toLowerCase().includes(q)).forEach(it=>{if(mg[it.m])mg[it.m].push(it);});const html=Object.entries(mg).map(([m,items])=>items.length?`<div class="m6sec"><div class="m6sec-title" style="color:${MC[m]}"><i class="ti ${MI[m]}"></i>${m}</div><div>${items.map(it=>`<span class="chip ${formRC.includes(it.id)?'sel':''}" onclick="toggleRC('${it.id}')" title="${it.impact}">${it.ippi?'★ ':''} ${it.hazard.slice(0,36)}${it.hazard.length>36?'…':''}</span>`).join('')}</div></div>`:'').join('');const pc=document.getElementById('panelContent');if(pc)pc.innerHTML=html||'<div style="font-size:11px;color:var(--text3);padding:8px">Tidak ditemukan</div>';};
+window.calcRL=()=>{const sr=document.getElementById('fsr')?.value,ll=document.getElementById('fll')?.value,b=document.getElementById('rlBox');if(!b)return;if(sr&&ll){const code=sr+ll,rr=RM[code]||'-';b.style.display='';document.getElementById('rlCode').textContent='Kode: '+code;document.getElementById('rlBadge').innerHTML=rrB(rr);}else b.style.display='none';};
+window.prevCtrl=()=>{const v=(document.getElementById('fctrl')?.value||'').split(',').map(n=>n.trim()).filter(Boolean);const p=document.getElementById('ctrlPrev');if(p)p.innerHTML=v.map(n=>CTRL[n]?`<span style="display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:10px;margin:1px">${n}. ${CTRL[n]}</span>`:'').join('');};
+window.resetF=()=>{formRC=[];['fs','fa','fsub','fhaz','fcons','fsr','fll','fsig','fctrl','flegal'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});const b=document.getElementById('rlBox');if(b)b.style.display='none';updateRCBox();const cp=document.getElementById('ctrlPrev');if(cp)cp.innerHTML='';const pq=document.getElementById('panelQ');if(pq){pq.value='';filterPanel();}};
+window.submitHazid=async()=>{const section=document.getElementById('fs')?.value,sub=document.getElementById('fsub')?.value?.trim(),haz=document.getElementById('fhaz')?.value?.trim(),cons=document.getElementById('fcons')?.value?.trim();if(!section||!sub||!haz||!cons){toast('Isi field wajib (*)','err');return;}const sr=document.getElementById('fsr')?.value,ll=document.getElementById('fll')?.value,rlc=sr&&ll?sr+ll:'';try{await addDoc(collection(db,'hazid'),{section,activity:document.getElementById('fa')?.value||'',sub,hazard:haz,consequence:cons,rootCause:formRC.join(','),category:document.getElementById('fcat')?.value||'',sr,ll:ll?parseInt(ll):0,rr:rlc?RM[rlc]||'':'',sig:document.getElementById('fsig')?.value||'',controls:document.getElementById('fctrl')?.value||'',legal:document.getElementById('flegal')?.value||'',createdAt:serverTimestamp(),createdBy:user.email});toast('HAZID tersimpan!');resetF();}catch(e){toast('Gagal: '+e.message,'err');}};
 
-function updateRCBox(){
-  const box = document.getElementById('rcBox');
-  if(!box)return;
-  const lib = libData;
-  box.innerHTML = '';
-  if(formRC.length===0){
-    box.innerHTML='<span class="rc-placeholder">Klik chip di panel kanan untuk menambahkan root cause...</span>';
-    return;
-  }
-  formRC.forEach(id=>{
-    const it=lib.find(l=>l.id===id);
-    if(!it)return;
-    const c=M6_COLORS[it.m]||'#888';
-    const bg=M6_BG[it.m]||'#eee';
-    const span=document.createElement('span');
-    span.className='rc-chip';
-    span.style=`background:${bg};color:${c};border-color:${c}33`;
-    span.innerHTML=`<i class="ti ${M6_ICONS[it.m]}" style="font-size:10px"></i> ${it.m}: ${it.hazard.slice(0,26)}… <i class="ti ti-x" style="font-size:10px"></i>`;
-    span.onclick=()=>toggleRC(id);
-    box.appendChild(span);
-  });
-}
-
-window.filterPanel = () => {
-  const q = (document.getElementById('panelQ')?.value||'').toLowerCase();
-  const lib = libData;
-  const mGroups={Man:[],Machine:[],Material:[],Method:[],Measurement:[],Milieu:[]};
-  lib.filter(it=>!q||it.hazard.toLowerCase().includes(q)||it.m.toLowerCase().includes(q)||it.impact.toLowerCase().includes(q)).forEach(it=>{if(mGroups[it.m])mGroups[it.m].push(it);});
-  const html=Object.entries(mGroups).map(([m,items])=>items.length?`
-<div class="m6-section">
-  <div class="m6-section-title" style="color:${M6_COLORS[m]}"><i class="ti ${M6_ICONS[m]}"></i>${m}</div>
-  <div>${items.map(it=>`<span class="chip ${formRC.includes(it.id)?'selected':''}" onclick="toggleRC('${it.id}')" title="${it.impact}">${it.ippi?'<span class="star">★</span>':''} ${it.hazard.slice(0,38)}${it.hazard.length>38?'…':''}</span>`).join('')}</div>
-</div>`:'').join('');
-  const pc=document.getElementById('panelContent');
-  if(pc) pc.innerHTML=html||'<div style="font-size:12px;color:var(--text3);padding:8px">Tidak ditemukan</div>';
-};
-
-window.calcRL = () => {
-  const sr=document.getElementById('fsr')?.value;
-  const ll=document.getElementById('fll')?.value;
-  const box=document.getElementById('rlBox');
-  if(!box)return;
-  if(sr&&ll){
-    const code=sr+ll, rr=RISK_MATRIX[code]||'-';
-    box.style.display='';
-    document.getElementById('rlCode').textContent='Kode: '+code;
-    document.getElementById('rlBadge').innerHTML=rrBadge(rr);
-  } else box.style.display='none';
-};
-
-window.previewCtrl = () => {
-  const v=(document.getElementById('fctrl')?.value||'').split(',').map(n=>n.trim()).filter(Boolean);
-  const p=document.getElementById('ctrlPrev');
-  if(!p)return;
-  p.innerHTML=v.map(n=>CONTROLS[n]?`<span style="display:inline-block;background:#F5F6F8;border:1px solid #E2E4E8;border-radius:4px;padding:1px 6px;font-size:10px;margin:1px">${n}. ${CONTROLS[n]}</span>`:'').join('');
-};
-
-window.resetForm = () => {
-  formRC=[];
-  ['fs','fa','fsub','fhaz','fcons','fsr','fll','fsig','fctrl','flegal'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  ['fR','fNR','fN','fA','fE'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
-  const rlb=document.getElementById('rlBox');if(rlb)rlb.style.display='none';
-  updateRCBox();
-  const cp=document.getElementById('ctrlPrev');if(cp)cp.innerHTML='';
-  const pp=document.getElementById('panelQ');if(pp){pp.value='';filterPanel();}
-};
-
-window.submitHazid = async () => {
-  const section=document.getElementById('fs')?.value;
-  const sub=document.getElementById('fsub')?.value?.trim();
-  const haz=document.getElementById('fhaz')?.value?.trim();
-  const cons=document.getElementById('fcons')?.value?.trim();
-  if(!section||!sub||!haz||!cons){showToast('Isi semua field wajib (*)','error');return;}
-  const sr=document.getElementById('fsr')?.value;
-  const ll=document.getElementById('fll')?.value;
-  const rlc=sr&&ll?sr+ll:'';
-  const data={
-    section,
-    activity:document.getElementById('fa')?.value||'',
-    sub,hazard:haz,consequence:cons,
-    rootCause:formRC.join(','),
-    category:document.getElementById('fcat')?.value||'',
-    conditions:{R:document.getElementById('fR')?.checked||false,NR:document.getElementById('fNR')?.checked||false,N:document.getElementById('fN')?.checked||false,A:document.getElementById('fA')?.checked||false,E:document.getElementById('fE')?.checked||false},
-    sr,ll:ll?parseInt(ll):0,rr:rlc?RISK_MATRIX[rlc]||'':'',
-    sig:document.getElementById('fsig')?.value||'',
-    controls:document.getElementById('fctrl')?.value||'',
-    legal:document.getElementById('flegal')?.value||'',
-    createdAt:serverTimestamp(),
-    createdBy:currentUser.email
-  };
-  try{
-    await addDoc(collection(db,'hazid'),data);
-    showToast('Entri HAZID tersimpan!');
-    resetForm();
-  }catch(e){showToast('Gagal menyimpan: '+e.message,'error');}
-};
-
-// ─── LIBRARY ───
+// ─────────────── LIBRARY ───────────────
 function renderLibrary(){
-  const lib=libData;
-  const ms=['Man','Machine','Material','Method','Measurement','Milieu'];
-  let items=lib.filter(it=>it.m===libFilter.m);
-  if(libFilter.search) items=items.filter(it=>it.hazard.toLowerCase().includes(libFilter.search.toLowerCase())||it.impact.toLowerCase().includes(libFilter.search.toLowerCase()));
-  if(libFilter.domain!=='all') items=items.filter(it=>(it.domains||[]).includes(libFilter.domain));
-
-  const tabs=ms.map(m=>`<button class="lib-tab ${libFilter.m===m?'active':''}" onclick="setLibM('${m}')" style="${libFilter.m===m?'border-color:'+M6_COLORS[m]+';color:'+M6_COLORS[m]+';background:'+M6_BG[m]:''}">
-    <i class="ti ${M6_ICONS[m]}" style="font-size:14px"></i>${m} <span style="font-size:10px;font-weight:400">(${lib.filter(l=>l.m===m).length})</span>
-  </button>`).join('');
-
-  const rows=items.map((it,i)=>`
-<div class="lib-item">
-  <div class="lib-num" style="background:${M6_BG[it.m]||'#eee'};color:${M6_COLORS[it.m]||'#888'}">${i+1}</div>
-  <div class="lib-text">
-    <div class="lib-hazard">${it.ippi?`<i class="ti ti-star" style="font-size:11px;color:var(--blue)" title="Relevan IPPI"></i> `:''}${it.hazard}</div>
-    <div class="lib-impact">Dampak: ${it.impact}</div>
-    <div>${(it.domains||[]).map(d=>domBadge(d)).join('')}</div>
-    ${it.note?`<div class="lib-note"><i class="ti ti-info-circle" style="font-size:11px"></i>${it.note}</div>`:''}
-  </div>
-  ${!it.isDefault?`<button class="btn-del" onclick="deleteLib('${it.id}')" aria-label="Hapus"><i class="ti ti-trash"></i></button>`:'<div style="width:32px"></div>'}
-</div>`).join('');
-
-  return `
+  const lib=libData,ms=['Man','Machine','Material','Method','Measurement','Milieu'];
+  let items=lib.filter(it=>it.m===libFilt.m);
+  if(libFilt.search)items=items.filter(it=>it.hazard.toLowerCase().includes(libFilt.search.toLowerCase())||it.impact.toLowerCase().includes(libFilt.search.toLowerCase()));
+  if(libFilt.domain!=='all')items=items.filter(it=>(it.domains||[]).includes(libFilt.domain));
+  const tabs=ms.map(m=>`<button class="lib-tab ${libFilt.m===m?'active':''}" onclick="setLibM('${m}')" style="${libFilt.m===m?'border-color:'+MC[m]+';color:'+MC[m]+';background:'+MB[m]:''}"><i class="ti ${MI[m]}" style="font-size:13px"></i>${m} <span style="font-size:10px;font-weight:400">(${lib.filter(l=>l.m===m).length})</span></button>`).join('');
+  const rows=items.map((it,i)=>`<div class="lib-item"><div class="li-num" style="background:${MB[it.m]};color:${MC[it.m]}">${i+1}</div><div class="li-text"><div class="li-haz">${it.ippi?'★ ':''} ${it.hazard}</div><div class="li-imp">Dampak: ${it.impact}</div><div>${(it.domains||[]).map(d=>domB(d)).join('')}</div>${it.note?`<div class="li-note"><i class="ti ti-info-circle" style="font-size:10px"></i>${it.note}</div>`:''}</div>${!it.isDefault?`<button class="btn-del" onclick="delLib('${it.id}')"><i class="ti ti-trash"></i></button>`:'<div style="width:28px"></div>'}</div>`).join('');
+  return`
 <div class="lib-tabs">${tabs}</div>
-<div class="lib-toolbar">
-  <input type="text" placeholder="Cari di library ${libFilter.m}..." value="${libFilter.search}" oninput="libFilter.search=this.value;renderL()">
-  <select onchange="libFilter.domain=this.value;renderL()" style="height:34px">
-    <option value="all">Semua domain</option><option>HSE</option><option>Quality</option><option>Operational</option><option>Environment</option><option>Compliance</option><option>Measurement</option>
-  </select>
-  <span style="font-size:12px;color:var(--text3);line-height:34px;white-space:nowrap">${items.length} entri</span>
+<div class="toolbar">
+  <input type="text" placeholder="Cari di ${libFilt.m}..." value="${libFilt.search}" oninput="libFilt.search=this.value;renderLib()">
+  <select onchange="libFilt.domain=this.value;renderLib()" style="height:34px"><option value="all">Semua domain</option><option>HSE</option><option>Quality</option><option>Operational</option><option>Environment</option><option>Compliance</option><option>Measurement</option></select>
+  <span class="cnt">${items.length} entri</span>
 </div>
-<div class="lib-list">
-  ${rows||'<div class="empty"><i class="ti ti-inbox-off"></i><p>Tidak ada entri</p></div>'}
-</div>
+<div class="lib-list">${rows||'<div class="empty"><i class="ti ti-inbox-off"></i><p>Tidak ada entri</p></div>'}</div>
 <div class="add-form">
-  <h4><i class="ti ti-plus" style="color:var(--blue)"></i> Tambah entri baru — ${libFilter.m}</h4>
-  <div class="form-grid" style="max-width:100%">
-    <div class="fg full"><label>Hazard / faktor penyebab <span class="req">*</span></label>
-      <input type="text" id="lhaz" placeholder="Deskripsi hazard atau faktor root cause yang ingin ditambahkan"></div>
-    <div class="fg full"><label>Dampak potensial <span class="req">*</span></label>
-      <input type="text" id="limp" placeholder="Apa yang bisa terjadi akibat faktor ini"></div>
-    <div class="fg"><label>Domain (pisahkan koma)</label>
-      <input type="text" id="ldom" placeholder="HSE,Quality,Operational"></div>
-    <div class="fg"><label>Catatan / contoh spesifik</label>
-      <input type="text" id="lnote" placeholder="Referensi atau contoh di area IPPI"></div>
-    <div class="fg" style="display:flex;align-items:center;gap:8px;padding-top:14px">
-      <label style="display:flex;align-items:center;gap:6px;font-weight:400;font-size:13px;cursor:pointer"><input type="checkbox" id="lippi"> Relevan untuk PT. IPPI</label>
+  <h4><i class="ti ti-plus"></i> Tambah ke library — ${libFilt.m}</h4>
+  <div class="fgrid" style="max-width:700px">
+    <div class="fg full"><label>Hazard / faktor <span class="req">*</span></label><input type="text" id="lhaz" placeholder="Deskripsi hazard atau root cause"></div>
+    <div class="fg full"><label>Dampak potensial <span class="req">*</span></label><input type="text" id="limp" placeholder="Akibat jika faktor ini tidak dikendalikan"></div>
+    <div class="fg"><label>Domain (pisahkan koma)</label><input type="text" id="ldom" placeholder="HSE,Quality,Operational"></div>
+    <div class="fg"><label>Catatan / contoh</label><input type="text" id="lnote" placeholder="Contoh spesifik di IPPI"></div>
+    <div class="fg" style="flex-direction:row;align-items:center;gap:8px;padding-top:14px"><label style="font-weight:400;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox" id="lippi"> Relevan untuk PT. IPPI</label></div>
+    <div class="fg full" style="display:flex;gap:8px;padding-top:4px"><button class="btn-primary" onclick="addLib()"><i class="ti ti-device-floppy"></i> Tambah</button></div>
+  </div>
+</div>`;
+}
+window.setLibM=m=>{libFilt.m=m;libFilt.search='';libFilt.domain='all';render();};
+window.renderLib=()=>{document.getElementById('mainContent').innerHTML=renderLibrary();};
+window.addLib=async()=>{const haz=document.getElementById('lhaz')?.value?.trim(),imp=document.getElementById('limp')?.value?.trim();if(!haz||!imp){toast('Isi hazard dan dampak','err');return;}const doms=(document.getElementById('ldom')?.value||'Operational').split(',').map(d=>d.trim()).filter(Boolean);try{await addDoc(collection(db,'library6m'),{m:libFilt.m,hazard:haz,impact:imp,domains:doms,ippi:document.getElementById('lippi')?.checked||false,note:document.getElementById('lnote')?.value||'',isDefault:false,createdAt:serverTimestamp(),createdBy:user.email});toast('Library tersimpan!');['lhaz','limp','ldom','lnote'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});const li=document.getElementById('lippi');if(li)li.checked=false;}catch(e){toast('Gagal: '+e.message,'err');}};
+window.delLib=async id=>{if(!confirm('Hapus entri library?'))return;try{await deleteDoc(doc(db,'library6m',id));toast('Dihapus');}catch(e){toast('Gagal','err');}};
+
+// ─────────────── F021 DASHBOARD ───────────────
+function renderF021Dash(){
+  const all=f021Data;
+  const prog=all.filter(d=>d.programNeeded).length;
+  const mitigated=all.filter(d=>d.residualRR==='EHS-1'||d.residualRR==='EHS-2').length;
+  const secs=[...new Set(all.map(d=>d.section))];
+  const bySec=secs.map(s=>({s,n:all.filter(d=>d.section===s).length,prog:all.filter(d=>d.section===s&&d.programNeeded).length}));
+  const rr2={'EHS-1':0,'EHS-2':0,'EHS-3':0,'EHS-4':0};all.forEach(d=>{if(rr2[d.residualRR]!==undefined)rr2[d.residualRR]++;});
+
+  const html=`
+<div class="flow-banner" style="background:linear-gradient(90deg,var(--amber-lt),var(--teal-lt))">
+  <div class="flow-step"><div class="fs-num" style="background:var(--amber-lt);color:var(--amber)">F021</div><div><div style="font-size:11px;font-weight:600;color:var(--amber)">Register Risiko Tinggi</div><div style="font-size:11px;color:var(--text2)">${all.length} entri risiko terdaftar</div></div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step"><div class="fs-num" style="background:var(--blue-lt);color:var(--blue)">+</div><div><div style="font-size:11px;font-weight:600;color:var(--blue)">Kontrol Tambahan</div><div style="font-size:11px;color:var(--text2)">${prog} membutuhkan program</div></div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step"><div class="fs-num" style="background:var(--teal-lt);color:var(--teal)">✓</div><div><div style="font-size:11px;font-weight:600;color:var(--teal)">Residual Risk ≤ EHS-2</div><div style="font-size:11px;color:var(--text2)">${mitigated} dari ${all.length} berhasil diturunkan</div></div></div>
+</div>
+<div class="stats-grid">
+  <div class="sc"><div class="sl">Risiko terdaftar (F021)</div><div class="sv">${all.length}</div><div class="ss">dari F020 high risk</div></div>
+  <div class="sc info"><div class="sl">Butuh program</div><div class="sv">${prog}</div><div class="ss">programme required = Y</div></div>
+  <div class="sc success"><div class="sl">Residual ≤ EHS-2</div><div class="sv">${mitigated}</div><div class="ss">risiko berhasil diturunkan</div></div>
+  <div class="sc warn"><div class="sl">Residual ≥ EHS-3</div><div class="sv">${all.length-mitigated}</div><div class="ss">perlu tindak lanjut lebih</div></div>
+</div>
+<div class="chart-grid">
+  <div class="chart-card"><h3>Distribusi residual risk per section</h3><div class="chart-wrap"><canvas id="f21C1"></canvas></div></div>
+  <div class="chart-card"><h3>Program yang dibutuhkan vs tidak per section</h3><div class="chart-wrap"><canvas id="f21C2"></canvas></div></div>
+</div>
+<div class="chart-grid">
+  <div class="chart-card"><h3>Residual risk level keseluruhan</h3><div class="chart-wrap" style="height:170px"><canvas id="f21C3"></canvas></div></div>
+  <div class="chart-card" style="overflow:auto">
+    <h3>Ringkasan per section</h3>
+    <table style="min-width:auto;font-size:12px">
+      <thead><tr><th>Section</th><th>Total</th><th>Prog. Y</th><th>Residual ≤EHS-2</th></tr></thead>
+      <tbody>${bySec.map(x=>`<tr><td><span style="font-size:10px;background:var(--bg);padding:2px 6px;border-radius:4px;border:1px solid var(--border)">${x.s}</span></td><td>${x.n}</td><td>${x.prog}</td><td>${all.filter(d=>d.section===x.s&&(d.residualRR==='EHS-1'||d.residualRR==='EHS-2')).length}</td></tr>`).join('')}</tbody>
+    </table>
+  </div>
+</div>`;
+
+  setTimeout(()=>{
+    const c1=document.getElementById('f21C1');
+    if(c1)charts.f21c1=new Chart(c1,{type:'bar',data:{labels:bySec.map(x=>x.s),datasets:[{label:'Residual ≤EHS-2',data:bySec.map(x=>all.filter(d=>d.section===x.s&&(d.residualRR==='EHS-1'||d.residualRR==='EHS-2')).length),backgroundColor:'#1D9E7599',borderColor:'#1D9E75',borderWidth:1.5,borderRadius:4},{label:'Residual ≥EHS-3',data:bySec.map(x=>all.filter(d=>d.section===x.s&&(d.residualRR==='EHS-3'||d.residualRR==='EHS-4')).length),backgroundColor:'#BA751799',borderColor:'#BA7517',borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}}},scales:{x:{ticks:{font:{size:10},autoSkip:false}},y:{ticks:{stepSize:1},beginAtZero:true}}}});
+    const c2=document.getElementById('f21C2');
+    if(c2)charts.f21c2=new Chart(c2,{type:'bar',data:{labels:bySec.map(x=>x.s),datasets:[{label:'Prog. Y',data:bySec.map(x=>x.prog),backgroundColor:'#185FA599',borderColor:'#185FA5',borderWidth:1.5,borderRadius:4},{label:'Prog. N',data:bySec.map(x=>x.n-x.prog),backgroundColor:'#9099A855',borderColor:'#9099A8',borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}}},scales:{x:{ticks:{font:{size:10},autoSkip:false}},y:{ticks:{stepSize:1},beginAtZero:true}}}});
+    const c3=document.getElementById('f21C3');
+    if(c3)charts.f21c3=new Chart(c3,{type:'doughnut',data:{labels:Object.keys(rr2),datasets:[{data:Object.values(rr2),backgroundColor:['#1D9E75','#185FA5','#BA7517','#A32D2D'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:10}}}}});
+  },100);
+  return html;
+}
+
+// ─────────────── F021 LIST ───────────────
+function renderF021List(){
+  const secs=[...new Set(f021Data.map(d=>d.section))];
+  let rows=[...f021Data];
+  if(filt21.section!=='all')rows=rows.filter(d=>d.section===filt21.section);
+  if(filt21.rr!=='all')rows=rows.filter(d=>d.residualRR===filt21.rr);
+  if(filt21.program!=='all')rows=rows.filter(d=>filt21.program==='Y'?d.programNeeded:!d.programNeeded);
+  if(filt21.search)rows=rows.filter(d=>[d.section,d.activity,d.sub,d.hazard,d.programDesc,d.opportunity].join(' ').toLowerCase().includes(filt21.search.toLowerCase()));
+  const secOpts=secs.map(s=>`<option value="${s}" ${filt21.section===s?'selected':''}>${s}</option>`).join('');
+  const trows=rows.map((d,i)=>`<tr>
+    <td style="font-size:11px;color:var(--text3);text-align:center">${i+1}</td>
+    <td><span style="font-size:10px;background:var(--bg);padding:2px 6px;border-radius:4px;border:1px solid var(--border)">${d.section}</span></td>
+    <td style="max-width:120px;font-size:11px;color:var(--text2)">${d.activity||''}</td>
+    <td style="max-width:130px;font-weight:500">${d.hazard||''}</td>
+    <td>${rrB(d.existingRR)} ${sigB(d.sig)}</td>
+    <td style="max-width:120px;font-size:11px">${ctrlChips(d.addControl)}</td>
+    <td style="max-width:140px;font-size:11px;color:var(--text2)">${d.opportunity||'-'}</td>
+    <td style="text-align:center"><span class="badge" style="background:${d.programNeeded?'var(--blue-lt)':'var(--bg)'};color:${d.programNeeded?'var(--blue)':'var(--text3)'}">${d.programNeeded?'Y':'N'}</span></td>
+    <td style="max-width:140px;font-size:11px;color:var(--text2)">${d.programDesc||'-'}</td>
+    <td>${rrB(d.residualRR)} ${sigB(d.residualSig)}</td>
+    <td><button class="btn-del" onclick="delF021('${d.id}')"><i class="ti ti-trash"></i></button></td>
+  </tr>`).join('');
+  return`
+<div class="toolbar">
+  <select onchange="filt21.section=this.value;render()"><option value="all">Semua section</option>${secOpts}</select>
+  <select onchange="filt21.rr=this.value;render()"><option value="all">Semua residual</option><option>EHS-1</option><option>EHS-2</option><option>EHS-3</option><option>EHS-4</option></select>
+  <select onchange="filt21.program=this.value;render()"><option value="all">Semua program</option><option value="Y">Butuh program (Y)</option><option value="N">Tidak butuh (N)</option></select>
+  <input type="text" placeholder="Cari hazard, program, section..." value="${filt21.search}" oninput="filt21.search=this.value;render()">
+  <span class="cnt">${rows.length} entri</span>
+</div>
+<div class="tbl-wrap"><div class="tbl-scroll"><table>
+<thead><tr><th>#</th><th>Section</th><th>Aktivitas</th><th>Hazard</th><th>Risk awal</th><th>Kontrol tambahan</th><th>Peluang</th><th>Prog.</th><th>Deskripsi program</th><th>Residual risk</th><th></th></tr></thead>
+<tbody>${trows||'<tr><td colspan="11"><div class="empty"><i class="ti ti-inbox-off"></i><p>Tidak ada data</p></div></td></tr>'}</tbody>
+</table></div></div>`;
+}
+window.delF021=async id=>{if(!confirm('Hapus entri F021?'))return;try{await deleteDoc(doc(db,'f021',id));toast('Dihapus');}catch(e){toast('Gagal','err');}};
+
+// ─────────────── F021 INPUT ───────────────
+function renderF021Input(){
+  // high risk dari F020 yang belum ada di F021
+  const existingHazards=new Set(f021Data.map(d=>d.sub+'|'+d.hazard));
+  const highRisk=hazidData.filter(d=>d.rr==='EHS-3'||d.rr==='EHS-4');
+  const needMitigation=highRisk.filter(d=>!existingHazards.has(d.sub+'|'+d.hazard));
+
+  const hazOpts=highRisk.map(d=>`<option value="${d.id}">[${d.section}] ${d.sub} — ${d.hazard} (${d.rr})</option>`).join('');
+
+  return`
+<div style="max-width:860px">
+  ${needMitigation.length>0?`<div style="background:var(--amber-lt);border:1px solid #E8C882;border-radius:var(--radius);padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--amber);display:flex;align-items:center;gap:8px"><i class="ti ti-alert-triangle"></i> <strong>${needMitigation.length} entri high risk</strong> dari F020 belum dibuatkan pengendalian di F021.</div>`:''}
+  <div class="f021-form">
+    <h3><i class="ti ti-shield-plus"></i> Tambah pengendalian & residual risk (F021)</h3>
+
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Pilih dari F020 (opsional — auto-fill)</div>
+      <select id="hazRef" onchange="autoFillF021(this.value)" style="width:100%;padding:7px 9px;border-radius:var(--radius);border:1px solid var(--border2);font-size:12px;font-family:inherit;background:#fff;color:var(--text)">
+        <option value="">-- Pilih bahaya dari F020 untuk auto-fill --</option>
+        ${hazOpts}
+      </select>
     </div>
-    <div class="fg full" style="display:flex;gap:10px;padding-top:4px">
-      <button class="btn-primary" onclick="addLib()"><i class="ti ti-device-floppy"></i> Tambah ke library</button>
+
+    <div class="risk-arrow" id="riskArrow" style="display:none">
+      <div class="ra-item"><div class="ra-lbl">Risk awal (F020)</div><div class="ra-val" id="raExisting">–</div></div>
+      <div class="ra-arr">→</div>
+      <div class="ra-item"><div class="ra-lbl">Kontrol tambahan</div><div class="ra-val" id="raCtrl" style="font-size:11px;color:var(--text2)">–</div></div>
+      <div class="ra-arr">→</div>
+      <div class="ra-item"><div class="ra-lbl">Residual risk</div><div class="ra-val" id="raResidual">–</div></div>
+    </div>
+
+    <div class="fgrid">
+      <div class="fg"><label>Section <span class="req">*</span></label><select id="g21s"><option value="">--</option><option>WWT</option><option>CFH</option><option>GFH</option><option>PSA</option><option>BOILER</option><option>COOLING WATER</option><option>MATERIAL</option></select></div>
+      <div class="fg"><label>Aktivitas</label><input type="text" id="g21a" placeholder="Tipe aktivitas"></div>
+      <div class="fg full"><label>Sub-aktivitas / pekerjaan</label><input type="text" id="g21sub" placeholder="Sub-aktivitas dari F020"></div>
+      <div class="fg full"><label>Hazard / aspek <span class="req">*</span></label><input type="text" id="g21haz" placeholder="Hazard yang akan dikendalikan"></div>
+      <div class="fg"><label>Risk awal (dari F020)</label><select id="g21exRR"><option value="">--</option><option>EHS-1</option><option>EHS-2</option><option>EHS-3</option><option>EHS-4</option></select></div>
+      <div class="fg"><label>Signifikansi awal</label><select id="g21sig"><option value="">-</option><option value="S">Significant (S)</option><option value="NS">Non-Significant (NS)</option></select></div>
+      <div class="fg"><label>Kategori dampak</label><select id="g21cat"><option>Environment</option><option>Safety</option><option>Health</option><option>Health/Safety</option><option>Operational</option><option>Quality</option><option>Compliance</option></select></div>
+      <div class="fg full"><label>Kontrol tambahan yang direkomendasikan (no. 1–25)</label><input type="text" id="g21ctrl" placeholder="Contoh: 11,12,23" oninput="prevCtrl21()"><div id="ctrlPrev21" class="hint" style="margin-top:3px"></div></div>
+      <div class="fg full"><label>Peluang (opportunity)</label><input type="text" id="g21opp" placeholder="Manfaat tambahan jika kontrol diterapkan"></div>
+      <div class="fg" style="flex-direction:row;align-items:center;gap:8px;padding-top:14px">
+        <label style="font-weight:400;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox" id="g21prog" onchange="toggleProgDesc()"> Programme required (Y)</label>
+      </div>
+      <div class="fg full" id="progDescBox" style="display:none"><label>Deskripsi program</label><textarea id="g21progdesc" placeholder="Nama program, target, PIC..."></textarea></div>
+
+      <div class="fg" style="border-top:1px solid var(--border);padding-top:12px"><label>Residual SR (setelah kontrol tambahan)</label><select id="g21rsr" onchange="calcResidualRL()"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
+      <div class="fg" style="border-top:1px solid var(--border);padding-top:12px"><label>Residual LL (setelah kontrol tambahan)</label><select id="g21rll" onchange="calcResidualRL()"><option value="">--</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></div>
+      <div class="fg" id="residualBox" style="display:none"><label>Residual risk (auto)</label><div class="residual-preview"><div class="rl-lbl" id="rrlCode"></div><div class="rl-big" id="rrlBadge"></div></div></div>
+      <div class="fg"><label>Residual signifikansi</label><select id="g21rsig"><option value="">-</option><option value="S">Significant (S)</option><option value="NS">Non-Significant (NS)</option></select></div>
+      <div class="fg full" style="display:flex;gap:8px;padding-top:4px">
+        <button class="btn-primary teal" onclick="submitF021()"><i class="ti ti-device-floppy"></i> Simpan ke F021</button>
+        <button class="btn-secondary" onclick="resetF021()"><i class="ti ti-refresh"></i> Reset</button>
+      </div>
     </div>
   </div>
 </div>`;
 }
 
-window.setLibM=(m)=>{libFilter.m=m;libFilter.search='';libFilter.domain='all';render();};
-window.renderL=()=>{document.getElementById('mainContent').innerHTML=renderLibrary();};
-
-window.addLib = async () => {
-  const haz=document.getElementById('lhaz')?.value?.trim();
-  const imp=document.getElementById('limp')?.value?.trim();
-  if(!haz||!imp){showToast('Isi hazard dan dampak','error');return;}
-  const domRaw=document.getElementById('ldom')?.value||'Operational';
-  const domains=domRaw.split(',').map(d=>d.trim()).filter(Boolean);
+window.autoFillF021=id=>{
+  const h=hazidData.find(d=>d.id===id);if(!h)return;
+  const set=(eid,val)=>{const e=document.getElementById(eid);if(e)e.value=val||'';};
+  set('g21s',h.section);set('g21a',h.activity);set('g21sub',h.sub);set('g21haz',h.hazard);set('g21exRR',h.rr);set('g21sig',h.sig);set('g21cat',h.category);
+  const ra=document.getElementById('riskArrow');if(ra)ra.style.display='flex';
+  const re=document.getElementById('raExisting');if(re)re.innerHTML=rrB(h.rr);
+};
+window.toggleProgDesc=()=>{const b=document.getElementById('progDescBox');if(b)b.style.display=document.getElementById('g21prog')?.checked?'':'none';};
+window.calcResidualRL=()=>{const sr=document.getElementById('g21rsr')?.value,ll=document.getElementById('g21rll')?.value,b=document.getElementById('residualBox');if(!b)return;if(sr&&ll){const code=sr+ll,rr=RM[code]||'-';b.style.display='';document.getElementById('rrlCode').textContent='Residual code: '+code;document.getElementById('rrlBadge').innerHTML=rrB(rr);const ra=document.getElementById('raResidual');if(ra)ra.innerHTML=rrB(rr);const rc=document.getElementById('raCtrl');if(rc)rc.textContent=document.getElementById('g21ctrl')?.value||'–';}else b.style.display='none';};
+window.prevCtrl21=()=>{const v=(document.getElementById('g21ctrl')?.value||'').split(',').map(n=>n.trim()).filter(Boolean);const p=document.getElementById('ctrlPrev21');if(p)p.innerHTML=v.map(n=>CTRL[n]?`<span style="display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:10px;margin:1px">${n}. ${CTRL[n]}</span>`:'').join('');};
+window.resetF021=()=>{['g21s','g21a','g21sub','g21haz','g21exRR','g21sig','g21cat','g21ctrl','g21opp','g21rsr','g21rll','g21rsig','g21progdesc'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});const p=document.getElementById('g21prog');if(p)p.checked=false;const pb=document.getElementById('progDescBox');if(pb)pb.style.display='none';const rb=document.getElementById('residualBox');if(rb)rb.style.display='none';const ra=document.getElementById('riskArrow');if(ra)ra.style.display='none';const hr=document.getElementById('hazRef');if(hr)hr.value='';};
+window.submitF021=async()=>{
+  const section=document.getElementById('g21s')?.value,haz=document.getElementById('g21haz')?.value?.trim();
+  if(!section||!haz){toast('Isi section & hazard','err');return;}
+  const rsr=document.getElementById('g21rsr')?.value,rll=document.getElementById('g21rll')?.value,rlc=rsr&&rll?rsr+rll:'';
   try{
-    await addDoc(collection(db,'library6m'),{
-      m:libFilter.m, hazard:haz, impact:imp, domains,
-      ippi:document.getElementById('lippi')?.checked||false,
-      note:document.getElementById('lnote')?.value||'',
-      isDefault:false,
-      createdAt:serverTimestamp(),
-      createdBy:currentUser.email
+    await addDoc(collection(db,'f021'),{
+      section,activity:document.getElementById('g21a')?.value||'',
+      sub:document.getElementById('g21sub')?.value||'',
+      hazard:haz,existingRR:document.getElementById('g21exRR')?.value||'',
+      sig:document.getElementById('g21sig')?.value||'',category:document.getElementById('g21cat')?.value||'',
+      addControl:document.getElementById('g21ctrl')?.value||'',
+      opportunity:document.getElementById('g21opp')?.value||'',
+      programNeeded:document.getElementById('g21prog')?.checked||false,
+      programDesc:document.getElementById('g21progdesc')?.value||'',
+      residualSR:rsr,residualLL:rll?parseInt(rll):0,
+      residualRL:rlc,residualRR:rlc?RM[rlc]||'':'',
+      residualSig:document.getElementById('g21rsig')?.value||'',
+      createdAt:serverTimestamp(),createdBy:user.email
     });
-    showToast('Entri library tersimpan!');
-    ['lhaz','limp','ldom','lnote'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-    const li=document.getElementById('lippi');if(li)li.checked=false;
-  }catch(e){showToast('Gagal menyimpan: '+e.message,'error');}
+    toast('F021 tersimpan!');resetF021();
+  }catch(e){toast('Gagal: '+e.message,'err');}
 };
 
-window.deleteLib = async (id) => {
-  if(!confirm('Hapus entri library ini?')) return;
-  try{
-    await deleteDoc(doc(db,'library6m',id));
-    showToast('Entri dihapus');
-  }catch(e){showToast('Gagal: '+e.message,'error');}
-};
+// ── TOAST ──
+function toast(msg,type='ok'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type==='err'?'err':'ok');t.style.display='flex';setTimeout(()=>t.style.display='none',3000);}
 
-// ─── TOAST ───
-function showToast(msg, type='success'){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className='toast '+(type==='error'?'error':'success');
-  t.style.display='flex';
-  setTimeout(()=>t.style.display='none',3000);
-}
-
-// Expose globals
-window.filt=filt;
-window.libFilter=libFilter;
-window.formRC=formRC;
+window.filt=filt;window.filt21=filt21;window.libFilt=libFilt;window.formRC=formRC;
 </script>
 </body>
 </html>
