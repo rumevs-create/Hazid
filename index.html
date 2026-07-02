@@ -448,6 +448,7 @@ function render(){
 }
 
 function destroyCharts(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};}
+window.render=render;
 
 // ── HELPERS ──
 function rrB(rr){if(!rr)return'';const m={'EHS-1':'ehs1','EHS-2':'ehs2','EHS-3':'ehs3','EHS-4':'ehs4'};return`<span class="badge b-${m[rr]||'ehs2'}">${rr}</span>`;}
