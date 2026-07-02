@@ -450,6 +450,7 @@ function render(){
 
 function destroyCharts(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};}
 window.render=render;
+window.toggleCatHint=(selId,hintId)=>{const s=document.getElementById(selId),h=document.getElementById(hintId);if(!s||!h)return;h.style.display=s.value==='Operability/Asset/Business'?'':'none';};
 
 // ── HELPERS ──
 function rrB(rr){if(!rr)return'';const m={'EHS-1':'ehs1','EHS-2':'ehs2','EHS-3':'ehs3','EHS-4':'ehs4'};return`<span class="badge b-${m[rr]||'ehs2'}">${rr}</span>`;}
@@ -598,7 +599,7 @@ function renderInput(){
           <div class="rc-box" id="rcBox"><span class="rc-ph">Klik chip di panel kanan...</span></div>
         </div>
         <div class="fg full"><label>Konsekuensi / dampak <span class="req">*</span></label><input type="text" id="fcons" placeholder="Akibat jika hazard tidak dikontrol"></div>
-        <div class="fg"><label>Kategori dampak</label><select id="fcat"><option>Environment</option><option>Safety</option><option>Health</option><option>Health/Safety</option><option>Operational</option><option>Quality</option><option>Compliance</option></select></div>
+        <div class="fg"><label>Kategori dampak</label><select id="fcat" onchange="toggleCatHint('fcat','fcatHint')"><option>Environment</option><option>Safety</option><option>Health</option><option>Health/Safety</option><option>Operational</option><option>Quality</option><option>Compliance</option><option>Operability/Asset/Business</option></select><div id="fcatHint" class="hint" style="display:none">Gunakan jika skenario murni berdampak operasional/bisnis (downtime, %EBITDA) tanpa konsekuensi EHS — ref. IVL EHS-208 B.2.4</div></div>
         <div class="fg"><label>Signifikansi</label><select id="fsig"><option value="">-</option><option value="S">Significant (S)</option><option value="NS">Non-Significant (NS)</option></select></div>
         <div class="fg"><label>Severity (SR)</label><select id="fsr" onchange="calcRL()"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></div>
         <div class="fg"><label>Likelihood (LL)</label><select id="fll" onchange="calcRL()"><option value="">--</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></div>
@@ -637,7 +638,7 @@ window.editHazid=id=>{
   setTimeout(()=>{
     const set=(eid,val)=>{const e=document.getElementById(eid);if(e)e.value=val||'';};
     set('fs',h.section);set('fa',h.activity);set('fsub',h.sub);set('fhaz',h.hazard);set('fcons',h.consequence);set('fcat',h.category||'Environment');set('fsig',h.sig);set('fsr',h.sr);set('fll',h.ll);set('fctrl',h.controls);set('flegal',h.legal);
-    calcRL();prevCtrl();updateRCBox();
+    calcRL();prevCtrl();updateRCBox();toggleCatHint('fcat','fcatHint');
   },30);
 };
 window.submitHazid=async()=>{const section=document.getElementById('fs')?.value,sub=document.getElementById('fsub')?.value?.trim(),haz=document.getElementById('fhaz')?.value?.trim(),cons=document.getElementById('fcons')?.value?.trim();if(!section||!sub||!haz||!cons){toast('Isi field wajib (*)','err');return;}const sr=document.getElementById('fsr')?.value,ll=document.getElementById('fll')?.value,rlc=sr&&ll?sr+ll:'';const payload={section,activity:document.getElementById('fa')?.value||'',sub,hazard:haz,consequence:cons,rootCause:formRC.join(','),category:document.getElementById('fcat')?.value||'',sr,ll:ll?parseInt(ll):0,rr:rlc?RM[rlc]||'':'',sig:document.getElementById('fsig')?.value||'',controls:document.getElementById('fctrl')?.value||'',legal:document.getElementById('flegal')?.value||''};try{if(editId){await updateDoc(doc(db,'hazid',editId),payload);toast('HAZID diperbarui!');}else{await addDoc(collection(db,'hazid'),{...payload,createdAt:serverTimestamp(),createdBy:user.email});toast('HAZID tersimpan!');}resetF();}catch(e){toast('Gagal: '+e.message,'err');}};
@@ -834,7 +835,7 @@ function renderF021Input(){
       <div class="fg full"><label>Hazard / aspek <span class="req">*</span></label><input type="text" id="g21haz" placeholder="Hazard yang akan dikendalikan"></div>
       <div class="fg"><label>Risk awal (dari F020)</label><select id="g21exRR"><option value="">--</option><option>EHS-1</option><option>EHS-2</option><option>EHS-3</option><option>EHS-4</option></select></div>
       <div class="fg"><label>Signifikansi awal</label><select id="g21sig"><option value="">-</option><option value="S">Significant (S)</option><option value="NS">Non-Significant (NS)</option></select></div>
-      <div class="fg"><label>Kategori dampak</label><select id="g21cat"><option>Environment</option><option>Safety</option><option>Health</option><option>Health/Safety</option><option>Operational</option><option>Quality</option><option>Compliance</option></select></div>
+      <div class="fg"><label>Kategori dampak</label><select id="g21cat" onchange="toggleCatHint('g21cat','g21catHint')"><option>Environment</option><option>Safety</option><option>Health</option><option>Health/Safety</option><option>Operational</option><option>Quality</option><option>Compliance</option><option>Operability/Asset/Business</option></select><div id="g21catHint" class="hint" style="display:none">Gunakan jika skenario murni berdampak operasional/bisnis (downtime, %EBITDA) tanpa konsekuensi EHS — ref. IVL EHS-208 B.2.4</div></div>
       <div class="fg full"><label>Kontrol tambahan yang direkomendasikan (no. 1–25)</label><input type="text" id="g21ctrl" placeholder="Contoh: 11,12,23" oninput="prevCtrl21()"><div id="ctrlPrev21" class="hint" style="margin-top:3px"></div></div>
       <div class="fg full"><label>Peluang (opportunity)</label><input type="text" id="g21opp" placeholder="Manfaat tambahan jika kontrol diterapkan"></div>
       <div class="fg" style="flex-direction:row;align-items:center;gap:8px;padding-top:14px">
@@ -877,7 +878,7 @@ window.editF021=id=>{
     const set=(eid,val)=>{const e=document.getElementById(eid);if(e)e.value=val||'';};
     set('g21s',d.section);set('g21a',d.activity);set('g21sub',d.sub);set('g21haz',d.hazard);set('g21exRR',d.existingRR);set('g21sig',d.sig);set('g21cat',d.category||'Environment');set('g21ctrl',d.addControl);set('g21opp',d.opportunity);set('g21progdesc',d.programDesc);set('g21rsr',d.residualSR);set('g21rll',d.residualLL);set('g21rsig',d.residualSig);
     const p=document.getElementById('g21prog');if(p)p.checked=!!d.programNeeded;
-    toggleProgDesc();prevCtrl21();calcResidualRL();
+    toggleProgDesc();prevCtrl21();calcResidualRL();toggleCatHint('g21cat','g21catHint');
     const ra=document.getElementById('riskArrow');if(ra){ra.style.display='flex';const re=document.getElementById('raExisting');if(re)re.innerHTML=rrB(d.existingRR);}
   },30);
 };
