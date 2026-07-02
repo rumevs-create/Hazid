@@ -381,6 +381,7 @@ let filt={section:'all',rr:'all',sig:'all',m6:'all',search:''};
 let filt21={section:'all',rr:'all',program:'all',search:''};
 let libFilt={m:'Man',search:'',domain:'all'};
 let formRC=[],charts={};
+let editId=null,editId21=null,editIdLib=null;
 
 // ── AUTH ──
 window.loginGoogle=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider());}catch(e){toast('Login gagal: '+e.message,'err');}};
@@ -535,7 +536,7 @@ function renderViewer(){
     <td style="max-width:130px;font-weight:500">${d.hazard||''}</td>
     <td style="max-width:170px">${rcChips(d.rootCause)}</td>
     <td>${rrB(d.rr)}</td><td>${sigB(d.sig)}</td>
-    <td><button class="btn-del" onclick="delHazid('${d.id}')"><i class="ti ti-trash"></i></button></td>
+    <td style="white-space:nowrap"><button class="btn-del" onclick="editHazid('${d.id}')" style="color:var(--blue);border-color:var(--blue);margin-right:3px"><i class="ti ti-edit"></i></button><button class="btn-del" onclick="delHazid('${d.id}')"><i class="ti ti-trash"></i></button></td>
   </tr>`).join('');
   return`
 <div class="toolbar">
@@ -581,11 +582,13 @@ function renderInput(){
   <div class="m6sec-title" style="color:${MC[m]}"><i class="ti ${MI[m]}"></i>${m} <span style="font-weight:400;color:var(--text3)">(${items.length})</span></div>
   <div>${items.map(it=>`<span class="chip ${formRC.includes(it.id)?'sel':''}" onclick="toggleRC('${it.id}')" title="${it.impact}">${it.ippi?'★ ':''} ${it.hazard.slice(0,36)}${it.hazard.length>36?'…':''}</span>`).join('')}</div>
 </div>`:'').join('');
+  const isEdit=!!editId;
   return`
 <div class="form-layout">
   <div>
     <div class="form-card">
-      <h3><i class="ti ti-plus" style="color:var(--blue)"></i> Identifikasi bahaya baru (F020)</h3>
+      <h3><i class="ti ${isEdit?'ti-edit':'ti-plus'}" style="color:var(--blue)"></i> ${isEdit?'Edit entri HAZID (F020)':'Identifikasi bahaya baru (F020)'}</h3>
+      ${isEdit?`<div style="background:var(--blue-lt);border:1px solid #B5D4F4;border-radius:var(--radius);padding:8px 12px;margin:-6px 0 14px;font-size:11px;color:var(--blue);display:flex;align-items:center;gap:6px"><i class="ti ti-info-circle"></i> Mode edit — perubahan akan menimpa entri yang sudah ada.</div>`:''}
       <div class="fgrid">
         <div class="fg"><label>Section <span class="req">*</span></label><select id="fs"><option value="">--</option><option>WWT</option><option>CFH</option><option>GFH</option><option>PSA</option><option>BOILER</option><option>COOLING WATER</option><option>MATERIAL</option></select></div>
         <div class="fg"><label>Tipe aktivitas <span class="req">*</span></label><select id="fa"><option value="">--</option><option>START-UP</option><option>OPERASI NORMAL</option><option>SHUTDOWN</option><option>KEADAAN DARURAT</option><option>PERSIAPAN BAHAN KIMIA</option><option>MAINTENANCE</option></select></div>
@@ -603,8 +606,8 @@ function renderInput(){
         <div class="fg full"><label>Kontrol yang ada (no. 1–25)</label><input type="text" id="fctrl" placeholder="Contoh: 3,10,14,24" oninput="prevCtrl()"><div id="ctrlPrev" class="hint" style="margin-top:3px"></div></div>
         <div class="fg full"><label>Peraturan terkait</label><input type="text" id="flegal" placeholder="PP, Permen, Prosedur IPPI..."></div>
         <div class="fg full" style="display:flex;gap:8px;padding-top:4px">
-          <button class="btn-primary" onclick="submitHazid()"><i class="ti ti-device-floppy"></i> Simpan</button>
-          <button class="btn-secondary" onclick="resetF()"><i class="ti ti-refresh"></i> Reset</button>
+          <button class="btn-primary" onclick="submitHazid()"><i class="ti ${isEdit?'ti-device-floppy':'ti-device-floppy'}"></i> ${isEdit?'Update':'Simpan'}</button>
+          <button class="btn-secondary" onclick="resetF()"><i class="ti ${isEdit?'ti-x':'ti-refresh'}"></i> ${isEdit?'Batal edit':'Reset'}</button>
         </div>
       </div>
     </div>
@@ -623,8 +626,21 @@ function updateRCBox(){const b=document.getElementById('rcBox');if(!b)return;b.i
 window.filterPanel=()=>{const q=(document.getElementById('panelQ')?.value||'').toLowerCase();const lib=libData;const mg={Man:[],Machine:[],Material:[],Method:[],Measurement:[],Milieu:[]};lib.filter(it=>!q||it.hazard.toLowerCase().includes(q)||it.m.toLowerCase().includes(q)).forEach(it=>{if(mg[it.m])mg[it.m].push(it);});const html=Object.entries(mg).map(([m,items])=>items.length?`<div class="m6sec"><div class="m6sec-title" style="color:${MC[m]}"><i class="ti ${MI[m]}"></i>${m}</div><div>${items.map(it=>`<span class="chip ${formRC.includes(it.id)?'sel':''}" onclick="toggleRC('${it.id}')" title="${it.impact}">${it.ippi?'★ ':''} ${it.hazard.slice(0,36)}${it.hazard.length>36?'…':''}</span>`).join('')}</div></div>`:'').join('');const pc=document.getElementById('panelContent');if(pc)pc.innerHTML=html||'<div style="font-size:11px;color:var(--text3);padding:8px">Tidak ditemukan</div>';};
 window.calcRL=()=>{const sr=document.getElementById('fsr')?.value,ll=document.getElementById('fll')?.value,b=document.getElementById('rlBox');if(!b)return;if(sr&&ll){const code=sr+ll,rr=RM[code]||'-';b.style.display='';document.getElementById('rlCode').textContent='Kode: '+code;document.getElementById('rlBadge').innerHTML=rrB(rr);}else b.style.display='none';};
 window.prevCtrl=()=>{const v=(document.getElementById('fctrl')?.value||'').split(',').map(n=>n.trim()).filter(Boolean);const p=document.getElementById('ctrlPrev');if(p)p.innerHTML=v.map(n=>CTRL[n]?`<span style="display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:10px;margin:1px">${n}. ${CTRL[n]}</span>`:'').join('');};
-window.resetF=()=>{formRC=[];['fs','fa','fsub','fhaz','fcons','fsr','fll','fsig','fctrl','flegal'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});const b=document.getElementById('rlBox');if(b)b.style.display='none';updateRCBox();const cp=document.getElementById('ctrlPrev');if(cp)cp.innerHTML='';const pq=document.getElementById('panelQ');if(pq){pq.value='';filterPanel();}};
-window.submitHazid=async()=>{const section=document.getElementById('fs')?.value,sub=document.getElementById('fsub')?.value?.trim(),haz=document.getElementById('fhaz')?.value?.trim(),cons=document.getElementById('fcons')?.value?.trim();if(!section||!sub||!haz||!cons){toast('Isi field wajib (*)','err');return;}const sr=document.getElementById('fsr')?.value,ll=document.getElementById('fll')?.value,rlc=sr&&ll?sr+ll:'';try{await addDoc(collection(db,'hazid'),{section,activity:document.getElementById('fa')?.value||'',sub,hazard:haz,consequence:cons,rootCause:formRC.join(','),category:document.getElementById('fcat')?.value||'',sr,ll:ll?parseInt(ll):0,rr:rlc?RM[rlc]||'':'',sig:document.getElementById('fsig')?.value||'',controls:document.getElementById('fctrl')?.value||'',legal:document.getElementById('flegal')?.value||'',createdAt:serverTimestamp(),createdBy:user.email});toast('HAZID tersimpan!');resetF();}catch(e){toast('Gagal: '+e.message,'err');}};
+window.resetF=()=>{editId=null;formRC=[];['fs','fa','fsub','fhaz','fcons','fsr','fll','fsig','fctrl','flegal'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});const b=document.getElementById('rlBox');if(b)b.style.display='none';updateRCBox();const cp=document.getElementById('ctrlPrev');if(cp)cp.innerHTML='';const pq=document.getElementById('panelQ');if(pq){pq.value='';filterPanel();}render();};
+window.editHazid=id=>{
+  const h=hazidData.find(d=>d.id===id);if(!h)return;
+  editId=id;formRC=h.rootCause?h.rootCause.split(',').filter(Boolean):[];
+  activeTab='input';
+  const nav=document.getElementById('navF020');
+  if(nav)nav.querySelectorAll('button').forEach((b,i)=>{const tabs=['dashboard','viewer','input','library'];b.classList.toggle('active',tabs[i]==='input');});
+  render();
+  setTimeout(()=>{
+    const set=(eid,val)=>{const e=document.getElementById(eid);if(e)e.value=val||'';};
+    set('fs',h.section);set('fa',h.activity);set('fsub',h.sub);set('fhaz',h.hazard);set('fcons',h.consequence);set('fcat',h.category||'Environment');set('fsig',h.sig);set('fsr',h.sr);set('fll',h.ll);set('fctrl',h.controls);set('flegal',h.legal);
+    calcRL();prevCtrl();updateRCBox();
+  },30);
+};
+window.submitHazid=async()=>{const section=document.getElementById('fs')?.value,sub=document.getElementById('fsub')?.value?.trim(),haz=document.getElementById('fhaz')?.value?.trim(),cons=document.getElementById('fcons')?.value?.trim();if(!section||!sub||!haz||!cons){toast('Isi field wajib (*)','err');return;}const sr=document.getElementById('fsr')?.value,ll=document.getElementById('fll')?.value,rlc=sr&&ll?sr+ll:'';const payload={section,activity:document.getElementById('fa')?.value||'',sub,hazard:haz,consequence:cons,rootCause:formRC.join(','),category:document.getElementById('fcat')?.value||'',sr,ll:ll?parseInt(ll):0,rr:rlc?RM[rlc]||'':'',sig:document.getElementById('fsig')?.value||'',controls:document.getElementById('fctrl')?.value||'',legal:document.getElementById('flegal')?.value||''};try{if(editId){await updateDoc(doc(db,'hazid',editId),payload);toast('HAZID diperbarui!');}else{await addDoc(collection(db,'hazid'),{...payload,createdAt:serverTimestamp(),createdBy:user.email});toast('HAZID tersimpan!');}resetF();}catch(e){toast('Gagal: '+e.message,'err');}};
 
 // ─────────────── LIBRARY ───────────────
 function renderLibrary(){
@@ -633,7 +649,7 @@ function renderLibrary(){
   if(libFilt.search)items=items.filter(it=>it.hazard.toLowerCase().includes(libFilt.search.toLowerCase())||it.impact.toLowerCase().includes(libFilt.search.toLowerCase()));
   if(libFilt.domain!=='all')items=items.filter(it=>(it.domains||[]).includes(libFilt.domain));
   const tabs=ms.map(m=>`<button class="lib-tab ${libFilt.m===m?'active':''}" onclick="setLibM('${m}')" style="${libFilt.m===m?'border-color:'+MC[m]+';color:'+MC[m]+';background:'+MB[m]:''}"><i class="ti ${MI[m]}" style="font-size:13px"></i>${m} <span style="font-size:10px;font-weight:400">(${lib.filter(l=>l.m===m).length})</span></button>`).join('');
-  const rows=items.map((it,i)=>`<div class="lib-item"><div class="li-num" style="background:${MB[it.m]};color:${MC[it.m]}">${i+1}</div><div class="li-text"><div class="li-haz">${it.ippi?'★ ':''} ${it.hazard}</div><div class="li-imp">Dampak: ${it.impact}</div><div>${(it.domains||[]).map(d=>domB(d)).join('')}</div>${it.note?`<div class="li-note"><i class="ti ti-info-circle" style="font-size:10px"></i>${it.note}</div>`:''}</div>${!it.isDefault?`<button class="btn-del" onclick="delLib('${it.id}')"><i class="ti ti-trash"></i></button>`:'<div style="width:28px"></div>'}</div>`).join('');
+  const rows=items.map((it,i)=>`<div class="lib-item"><div class="li-num" style="background:${MB[it.m]};color:${MC[it.m]}">${i+1}</div><div class="li-text"><div class="li-haz">${it.ippi?'★ ':''} ${it.hazard}</div><div class="li-imp">Dampak: ${it.impact}</div><div>${(it.domains||[]).map(d=>domB(d)).join('')}</div>${it.note?`<div class="li-note"><i class="ti ti-info-circle" style="font-size:10px"></i>${it.note}</div>`:''}</div><div style="display:flex;gap:3px;flex-shrink:0"><button class="btn-del" onclick="editLib('${it.id}')" style="color:var(--blue);border-color:var(--blue)"><i class="ti ti-edit"></i></button>${!it.isDefault?`<button class="btn-del" onclick="delLib('${it.id}')"><i class="ti ti-trash"></i></button>`:''}</div></div>`).join('');
   return`
 <div class="lib-tabs">${tabs}</div>
 <div class="toolbar">
@@ -651,20 +667,35 @@ function renderLibrary(){
 </div>
 <div class="lib-list">${rows||'<div class="empty"><i class="ti ti-inbox-off"></i><p>Tidak ada entri</p></div>'}</div>
 <div class="add-form">
-  <h4><i class="ti ti-plus"></i> Tambah ke library — ${libFilt.m}</h4>
+  <h4><i class="ti ${editIdLib?'ti-edit':'ti-plus'}"></i> ${editIdLib?'Edit entri library — '+libFilt.m:'Tambah ke library — '+libFilt.m}</h4>
   <div class="fgrid" style="max-width:700px">
     <div class="fg full"><label>Hazard / faktor <span class="req">*</span></label><input type="text" id="lhaz" placeholder="Deskripsi hazard atau root cause"></div>
     <div class="fg full"><label>Dampak potensial <span class="req">*</span></label><input type="text" id="limp" placeholder="Akibat jika faktor ini tidak dikendalikan"></div>
     <div class="fg"><label>Domain (pisahkan koma)</label><input type="text" id="ldom" placeholder="HSE,Quality,Operational"></div>
     <div class="fg"><label>Catatan / contoh</label><input type="text" id="lnote" placeholder="Contoh spesifik di IPPI"></div>
     <div class="fg" style="flex-direction:row;align-items:center;gap:8px;padding-top:14px"><label style="font-weight:400;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px"><input type="checkbox" id="lippi"> Relevan untuk PT. IPPI</label></div>
-    <div class="fg full" style="display:flex;gap:8px;padding-top:4px"><button class="btn-primary" onclick="addLib()"><i class="ti ti-device-floppy"></i> Tambah</button></div>
+    <div class="fg full" style="display:flex;gap:8px;padding-top:4px">
+      <button class="btn-primary" onclick="addLib()"><i class="ti ti-device-floppy"></i> ${editIdLib?'Update':'Tambah'}</button>
+      ${editIdLib?`<button class="btn-secondary" onclick="cancelEditLib()"><i class="ti ti-x"></i> Batal edit</button>`:''}
+    </div>
   </div>
 </div>`;
 }
 window.setLibM=m=>{libFilt.m=m;libFilt.search='';libFilt.domain='all';render();};
 window.renderLib=()=>{document.getElementById('mainContent').innerHTML=renderLibrary();};
-window.addLib=async()=>{const haz=document.getElementById('lhaz')?.value?.trim(),imp=document.getElementById('limp')?.value?.trim();if(!haz||!imp){toast('Isi hazard dan dampak','err');return;}const doms=(document.getElementById('ldom')?.value||'Operational').split(',').map(d=>d.trim()).filter(Boolean);try{await addDoc(collection(db,'library6m'),{m:libFilt.m,hazard:haz,impact:imp,domains:doms,ippi:document.getElementById('lippi')?.checked||false,note:document.getElementById('lnote')?.value||'',isDefault:false,createdAt:serverTimestamp(),createdBy:user.email});toast('Library tersimpan!');['lhaz','limp','ldom','lnote'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});const li=document.getElementById('lippi');if(li)li.checked=false;}catch(e){toast('Gagal: '+e.message,'err');}};
+window.editLib=id=>{
+  const it=libData.find(l=>l.id===id);if(!it)return;
+  editIdLib=id;libFilt.m=it.m;
+  render();
+  setTimeout(()=>{
+    const set=(eid,val)=>{const e=document.getElementById(eid);if(e)e.value=val||'';};
+    set('lhaz',it.hazard);set('limp',it.impact);set('ldom',(it.domains||[]).join(','));set('lnote',it.note);
+    const li=document.getElementById('lippi');if(li)li.checked=!!it.ippi;
+    document.querySelector('.add-form')?.scrollIntoView({behavior:'smooth',block:'nearest'});
+  },30);
+};
+window.cancelEditLib=()=>{editIdLib=null;render();};
+window.addLib=async()=>{const haz=document.getElementById('lhaz')?.value?.trim(),imp=document.getElementById('limp')?.value?.trim();if(!haz||!imp){toast('Isi hazard dan dampak','err');return;}const doms=(document.getElementById('ldom')?.value||'Operational').split(',').map(d=>d.trim()).filter(Boolean);const payload={m:libFilt.m,hazard:haz,impact:imp,domains:doms,ippi:document.getElementById('lippi')?.checked||false,note:document.getElementById('lnote')?.value||''};try{if(editIdLib){await updateDoc(doc(db,'library6m',editIdLib),payload);toast('Library diperbarui!');editIdLib=null;}else{await addDoc(collection(db,'library6m'),{...payload,isDefault:false,createdAt:serverTimestamp(),createdBy:user.email});toast('Library tersimpan!');}['lhaz','limp','ldom','lnote'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});const li=document.getElementById('lippi');if(li)li.checked=false;render();}catch(e){toast('Gagal: '+e.message,'err');}};
 window.delLib=async id=>{if(!confirm('Hapus entri library?'))return;try{await deleteDoc(doc(db,'library6m',id));toast('Dihapus');}catch(e){toast('Gagal','err');}};
 
 // ─────────────── F021 DASHBOARD ───────────────
@@ -736,7 +767,7 @@ function renderF021List(){
     <td style="text-align:center"><span class="badge" style="background:${d.programNeeded?'var(--blue-lt)':'var(--bg)'};color:${d.programNeeded?'var(--blue)':'var(--text3)'}">${d.programNeeded?'Y':'N'}</span></td>
     <td style="max-width:140px;font-size:11px;color:var(--text2)">${d.programDesc||'-'}</td>
     <td>${rrB(d.residualRR)} ${sigB(d.residualSig)}</td>
-    <td><button class="btn-del" onclick="delF021('${d.id}')"><i class="ti ti-trash"></i></button></td>
+    <td style="white-space:nowrap"><button class="btn-del" onclick="editF021('${d.id}')" style="color:var(--teal);border-color:var(--teal);margin-right:3px"><i class="ti ti-edit"></i></button><button class="btn-del" onclick="delF021('${d.id}')"><i class="ti ti-trash"></i></button></td>
   </tr>`).join('');
   return`
 <div class="toolbar">
@@ -771,12 +802,14 @@ function renderF021Input(){
   const needMitigation=highRisk.filter(d=>!existingHazards.has(d.sub+'|'+d.hazard));
 
   const hazOpts=highRisk.map(d=>`<option value="${d.id}">[${d.section}] ${d.sub} — ${d.hazard} (${d.rr})</option>`).join('');
+  const isEdit21=!!editId21;
 
   return`
 <div style="max-width:860px">
-  ${needMitigation.length>0?`<div style="background:var(--amber-lt);border:1px solid #E8C882;border-radius:var(--radius);padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--amber);display:flex;align-items:center;gap:8px"><i class="ti ti-alert-triangle"></i> <strong>${needMitigation.length} entri high risk</strong> dari F020 belum dibuatkan pengendalian di F021.</div>`:''}
+  ${needMitigation.length>0&&!isEdit21?`<div style="background:var(--amber-lt);border:1px solid #E8C882;border-radius:var(--radius);padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--amber);display:flex;align-items:center;gap:8px"><i class="ti ti-alert-triangle"></i> <strong>${needMitigation.length} entri high risk</strong> dari F020 belum dibuatkan pengendalian di F021.</div>`:''}
   <div class="f021-form">
-    <h3><i class="ti ti-shield-plus"></i> Tambah pengendalian & residual risk (F021)</h3>
+    <h3><i class="ti ${isEdit21?'ti-edit':'ti-shield-plus'}"></i> ${isEdit21?'Edit pengendalian & residual risk (F021)':'Tambah pengendalian & residual risk (F021)'}</h3>
+    ${isEdit21?`<div style="background:var(--teal-lt);border:1px solid #9ADEC8;border-radius:var(--radius);padding:8px 12px;margin:-6px 0 14px;font-size:11px;color:var(--teal);display:flex;align-items:center;gap:6px"><i class="ti ti-info-circle"></i> Mode edit — perubahan akan menimpa entri yang sudah ada.</div>`:''}
 
     <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:14px">
       <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Pilih dari F020 (opsional — auto-fill)</div>
@@ -814,8 +847,8 @@ function renderF021Input(){
       <div class="fg" id="residualBox" style="display:none"><label>Residual risk (auto)</label><div class="residual-preview"><div class="rl-lbl" id="rrlCode"></div><div class="rl-big" id="rrlBadge"></div></div></div>
       <div class="fg"><label>Residual signifikansi</label><select id="g21rsig"><option value="">-</option><option value="S">Significant (S)</option><option value="NS">Non-Significant (NS)</option></select></div>
       <div class="fg full" style="display:flex;gap:8px;padding-top:4px">
-        <button class="btn-primary teal" onclick="submitF021()"><i class="ti ti-device-floppy"></i> Simpan ke F021</button>
-        <button class="btn-secondary" onclick="resetF021()"><i class="ti ti-refresh"></i> Reset</button>
+        <button class="btn-primary teal" onclick="submitF021()"><i class="ti ti-device-floppy"></i> ${isEdit21?'Update F021':'Simpan ke F021'}</button>
+        <button class="btn-secondary" onclick="resetF021()"><i class="ti ${isEdit21?'ti-x':'ti-refresh'}"></i> ${isEdit21?'Batal edit':'Reset'}</button>
       </div>
     </div>
   </div>
@@ -832,27 +865,43 @@ window.autoFillF021=id=>{
 window.toggleProgDesc=()=>{const b=document.getElementById('progDescBox');if(b)b.style.display=document.getElementById('g21prog')?.checked?'':'none';};
 window.calcResidualRL=()=>{const sr=document.getElementById('g21rsr')?.value,ll=document.getElementById('g21rll')?.value,b=document.getElementById('residualBox');if(!b)return;if(sr&&ll){const code=sr+ll,rr=RM[code]||'-';b.style.display='';document.getElementById('rrlCode').textContent='Residual code: '+code;document.getElementById('rrlBadge').innerHTML=rrB(rr);const ra=document.getElementById('raResidual');if(ra)ra.innerHTML=rrB(rr);const rc=document.getElementById('raCtrl');if(rc)rc.textContent=document.getElementById('g21ctrl')?.value||'–';}else b.style.display='none';};
 window.prevCtrl21=()=>{const v=(document.getElementById('g21ctrl')?.value||'').split(',').map(n=>n.trim()).filter(Boolean);const p=document.getElementById('ctrlPrev21');if(p)p.innerHTML=v.map(n=>CTRL[n]?`<span style="display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:10px;margin:1px">${n}. ${CTRL[n]}</span>`:'').join('');};
-window.resetF021=()=>{['g21s','g21a','g21sub','g21haz','g21exRR','g21sig','g21cat','g21ctrl','g21opp','g21rsr','g21rll','g21rsig','g21progdesc'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});const p=document.getElementById('g21prog');if(p)p.checked=false;const pb=document.getElementById('progDescBox');if(pb)pb.style.display='none';const rb=document.getElementById('residualBox');if(rb)rb.style.display='none';const ra=document.getElementById('riskArrow');if(ra)ra.style.display='none';const hr=document.getElementById('hazRef');if(hr)hr.value='';};
+window.resetF021=()=>{editId21=null;['g21s','g21a','g21sub','g21haz','g21exRR','g21sig','g21cat','g21ctrl','g21opp','g21rsr','g21rll','g21rsig','g21progdesc'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});const p=document.getElementById('g21prog');if(p)p.checked=false;const pb=document.getElementById('progDescBox');if(pb)pb.style.display='none';const rb=document.getElementById('residualBox');if(rb)rb.style.display='none';const ra=document.getElementById('riskArrow');if(ra)ra.style.display='none';const hr=document.getElementById('hazRef');if(hr)hr.value='';render();};
+window.editF021=id=>{
+  const d=f021Data.find(x=>x.id===id);if(!d)return;
+  editId21=id;
+  activeTab='f021input';
+  const nav=document.getElementById('navF021');
+  if(nav)nav.querySelectorAll('button').forEach((b,i)=>{const tabs=['f021dash','f021list','f021input'];b.classList.toggle('active',tabs[i]==='f021input');});
+  render();
+  setTimeout(()=>{
+    const set=(eid,val)=>{const e=document.getElementById(eid);if(e)e.value=val||'';};
+    set('g21s',d.section);set('g21a',d.activity);set('g21sub',d.sub);set('g21haz',d.hazard);set('g21exRR',d.existingRR);set('g21sig',d.sig);set('g21cat',d.category||'Environment');set('g21ctrl',d.addControl);set('g21opp',d.opportunity);set('g21progdesc',d.programDesc);set('g21rsr',d.residualSR);set('g21rll',d.residualLL);set('g21rsig',d.residualSig);
+    const p=document.getElementById('g21prog');if(p)p.checked=!!d.programNeeded;
+    toggleProgDesc();prevCtrl21();calcResidualRL();
+    const ra=document.getElementById('riskArrow');if(ra){ra.style.display='flex';const re=document.getElementById('raExisting');if(re)re.innerHTML=rrB(d.existingRR);}
+  },30);
+};
 window.submitF021=async()=>{
   const section=document.getElementById('g21s')?.value,haz=document.getElementById('g21haz')?.value?.trim();
   if(!section||!haz){toast('Isi section & hazard','err');return;}
   const rsr=document.getElementById('g21rsr')?.value,rll=document.getElementById('g21rll')?.value,rlc=rsr&&rll?rsr+rll:'';
+  const payload={
+    section,activity:document.getElementById('g21a')?.value||'',
+    sub:document.getElementById('g21sub')?.value||'',
+    hazard:haz,existingRR:document.getElementById('g21exRR')?.value||'',
+    sig:document.getElementById('g21sig')?.value||'',category:document.getElementById('g21cat')?.value||'',
+    addControl:document.getElementById('g21ctrl')?.value||'',
+    opportunity:document.getElementById('g21opp')?.value||'',
+    programNeeded:document.getElementById('g21prog')?.checked||false,
+    programDesc:document.getElementById('g21progdesc')?.value||'',
+    residualSR:rsr,residualLL:rll?parseInt(rll):0,
+    residualRL:rlc,residualRR:rlc?RM[rlc]||'':'',
+    residualSig:document.getElementById('g21rsig')?.value||''
+  };
   try{
-    await addDoc(collection(db,'f021'),{
-      section,activity:document.getElementById('g21a')?.value||'',
-      sub:document.getElementById('g21sub')?.value||'',
-      hazard:haz,existingRR:document.getElementById('g21exRR')?.value||'',
-      sig:document.getElementById('g21sig')?.value||'',category:document.getElementById('g21cat')?.value||'',
-      addControl:document.getElementById('g21ctrl')?.value||'',
-      opportunity:document.getElementById('g21opp')?.value||'',
-      programNeeded:document.getElementById('g21prog')?.checked||false,
-      programDesc:document.getElementById('g21progdesc')?.value||'',
-      residualSR:rsr,residualLL:rll?parseInt(rll):0,
-      residualRL:rlc,residualRR:rlc?RM[rlc]||'':'',
-      residualSig:document.getElementById('g21rsig')?.value||'',
-      createdAt:serverTimestamp(),createdBy:user.email
-    });
-    toast('F021 tersimpan!');resetF021();
+    if(editId21){await updateDoc(doc(db,'f021',editId21),payload);toast('F021 diperbarui!');}
+    else{await addDoc(collection(db,'f021'),{...payload,createdAt:serverTimestamp(),createdBy:user.email});toast('F021 tersimpan!');}
+    resetF021();
   }catch(e){toast('Gagal: '+e.message,'err');}
 };
 
