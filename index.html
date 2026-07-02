@@ -538,10 +538,28 @@ function renderViewer(){
   </tr>`).join('');
   return`
 <div class="toolbar">
-  <select onchange="filt.section=this.value;render()"><option value="all">Semua section</option>${secOpts}</select>
-  <select onchange="filt.rr=this.value;render()"><option value="all">Semua risk</option><option>EHS-1</option><option>EHS-2</option><option>EHS-3</option><option>EHS-4</option></select>
-  <select onchange="filt.sig=this.value;render()"><option value="all">Semua sig.</option><option value="S">Significant</option><option value="NS">Non-Sig</option></select>
-  <select onchange="filt.m6=this.value;render()"><option value="all">Semua 6M</option><option>Man</option><option>Machine</option><option>Material</option><option>Method</option><option>Measurement</option><option>Milieu</option></select>
+  <select onchange="filt.section=this.value;render()"><option value="all" ${filt.section==='all'?'selected':''}>Semua section</option>${secOpts}</select>
+  <select onchange="filt.rr=this.value;render()">
+    <option value="all" ${filt.rr==='all'?'selected':''}>Semua risk</option>
+    <option value="EHS-1" ${filt.rr==='EHS-1'?'selected':''}>EHS-1</option>
+    <option value="EHS-2" ${filt.rr==='EHS-2'?'selected':''}>EHS-2</option>
+    <option value="EHS-3" ${filt.rr==='EHS-3'?'selected':''}>EHS-3</option>
+    <option value="EHS-4" ${filt.rr==='EHS-4'?'selected':''}>EHS-4</option>
+  </select>
+  <select onchange="filt.sig=this.value;render()">
+    <option value="all" ${filt.sig==='all'?'selected':''}>Semua sig.</option>
+    <option value="S" ${filt.sig==='S'?'selected':''}>Significant</option>
+    <option value="NS" ${filt.sig==='NS'?'selected':''}>Non-Sig</option>
+  </select>
+  <select onchange="filt.m6=this.value;render()">
+    <option value="all" ${filt.m6==='all'?'selected':''}>Semua 6M</option>
+    <option value="Man" ${filt.m6==='Man'?'selected':''}>Man</option>
+    <option value="Machine" ${filt.m6==='Machine'?'selected':''}>Machine</option>
+    <option value="Material" ${filt.m6==='Material'?'selected':''}>Material</option>
+    <option value="Method" ${filt.m6==='Method'?'selected':''}>Method</option>
+    <option value="Measurement" ${filt.m6==='Measurement'?'selected':''}>Measurement</option>
+    <option value="Milieu" ${filt.m6==='Milieu'?'selected':''}>Milieu</option>
+  </select>
   <input type="text" placeholder="Cari..." value="${filt.search}" oninput="filt.search=this.value;render()">
   <span class="cnt">${rows.length} entri</span>
 </div>
@@ -619,7 +637,15 @@ function renderLibrary(){
 <div class="lib-tabs">${tabs}</div>
 <div class="toolbar">
   <input type="text" placeholder="Cari di ${libFilt.m}..." value="${libFilt.search}" oninput="libFilt.search=this.value;renderLib()">
-  <select onchange="libFilt.domain=this.value;renderLib()" style="height:34px"><option value="all">Semua domain</option><option>HSE</option><option>Quality</option><option>Operational</option><option>Environment</option><option>Compliance</option><option>Measurement</option></select>
+  <select onchange="libFilt.domain=this.value;renderLib()" style="height:34px">
+    <option value="all" ${libFilt.domain==='all'?'selected':''}>Semua domain</option>
+    <option value="HSE" ${libFilt.domain==='HSE'?'selected':''}>HSE</option>
+    <option value="Quality" ${libFilt.domain==='Quality'?'selected':''}>Quality</option>
+    <option value="Operational" ${libFilt.domain==='Operational'?'selected':''}>Operational</option>
+    <option value="Environment" ${libFilt.domain==='Environment'?'selected':''}>Environment</option>
+    <option value="Compliance" ${libFilt.domain==='Compliance'?'selected':''}>Compliance</option>
+    <option value="Measurement" ${libFilt.domain==='Measurement'?'selected':''}>Measurement</option>
+  </select>
   <span class="cnt">${items.length} entri</span>
 </div>
 <div class="lib-list">${rows||'<div class="empty"><i class="ti ti-inbox-off"></i><p>Tidak ada entri</p></div>'}</div>
@@ -713,9 +739,19 @@ function renderF021List(){
   </tr>`).join('');
   return`
 <div class="toolbar">
-  <select onchange="filt21.section=this.value;render()"><option value="all">Semua section</option>${secOpts}</select>
-  <select onchange="filt21.rr=this.value;render()"><option value="all">Semua residual</option><option>EHS-1</option><option>EHS-2</option><option>EHS-3</option><option>EHS-4</option></select>
-  <select onchange="filt21.program=this.value;render()"><option value="all">Semua program</option><option value="Y">Butuh program (Y)</option><option value="N">Tidak butuh (N)</option></select>
+  <select onchange="filt21.section=this.value;render()"><option value="all" ${filt21.section==='all'?'selected':''}>Semua section</option>${secOpts}</select>
+  <select onchange="filt21.rr=this.value;render()">
+    <option value="all" ${filt21.rr==='all'?'selected':''}>Semua residual</option>
+    <option value="EHS-1" ${filt21.rr==='EHS-1'?'selected':''}>EHS-1</option>
+    <option value="EHS-2" ${filt21.rr==='EHS-2'?'selected':''}>EHS-2</option>
+    <option value="EHS-3" ${filt21.rr==='EHS-3'?'selected':''}>EHS-3</option>
+    <option value="EHS-4" ${filt21.rr==='EHS-4'?'selected':''}>EHS-4</option>
+  </select>
+  <select onchange="filt21.program=this.value;render()">
+    <option value="all" ${filt21.program==='all'?'selected':''}>Semua program</option>
+    <option value="Y" ${filt21.program==='Y'?'selected':''}>Butuh program (Y)</option>
+    <option value="N" ${filt21.program==='N'?'selected':''}>Tidak butuh (N)</option>
+  </select>
   <input type="text" placeholder="Cari hazard, program, section..." value="${filt21.search}" oninput="filt21.search=this.value;render()">
   <span class="cnt">${rows.length} entri</span>
 </div>
