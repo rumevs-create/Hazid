@@ -266,6 +266,20 @@ const auth=getAuth(fbApp),db=getFirestore(fbApp);
 // ── STATIC ──
 const RM={A1:'EHS-2',A2:'EHS-3',A3:'EHS-3',A4:'EHS-3',A5:'EHS-3',A6:'EHS-4',A7:'EHS-4',A8:'EHS-4',B1:'EHS-2',B2:'EHS-3',B3:'EHS-3',B4:'EHS-3',B5:'EHS-3',B6:'EHS-4',B7:'EHS-4',B8:'EHS-4',C1:'EHS-2',C2:'EHS-2',C3:'EHS-3',C4:'EHS-3',C5:'EHS-3',C6:'EHS-4',C7:'EHS-4',C8:'EHS-4',D1:'EHS-1',D2:'EHS-2',D3:'EHS-3',D4:'EHS-3',D5:'EHS-3',D6:'EHS-4',D7:'EHS-4',D8:'EHS-4',E1:'EHS-1',E2:'EHS-2',E3:'EHS-2',E4:'EHS-3',E5:'EHS-3',E6:'EHS-3',E7:'EHS-4',E8:'EHS-4',F1:'EHS-1',F2:'EHS-1',F3:'EHS-2',F4:'EHS-2',F5:'EHS-3',F6:'EHS-3',F7:'EHS-3',F8:'EHS-4',G1:'EHS-1',G2:'EHS-1',G3:'EHS-1',G4:'EHS-2',G5:'EHS-2',G6:'EHS-2',G7:'EHS-3',G8:'EHS-3',H1:'EHS-1',H2:'EHS-1',H3:'EHS-1',H4:'EHS-1',H5:'EHS-1',H6:'EHS-2',H7:'EHS-2',H8:'EHS-3'};
 const CTRL={1:'Menghilangkan sumber bahaya',2:'Mengganti dengan yang lebih aman',3:'Mengisolasi sumber bahaya',4:'Sistem penguncian/pemblokiran energi',5:'Pemasangan label dan tanda peringatan',6:'Rotasi kerja',7:'Pengendalian ergonomi',8:'Kebersihan dan sanitasi',9:'Pengaturan ventilasi',10:'Inspeksi',11:'Pemantauan dan pengukuran',12:'Program pemeliharaan',13:'Pelatihan dan edukasi',14:'PPE Minimal',15:'PPE Tambahan',16:'Penyediaan alat kritis',17:'Lembar Data Keselamatan',18:'Desain ulang pekerjaan',19:'Penyimpanan yang aman',20:'Pengangkutan yang aman',21:'Sistem pembuangan yang aman',22:'Pemeriksaan kesehatan',23:'Perencanaan kerja yang aman',24:'Prosedur dan instruksi kerja',25:'Peningkatan kepedulian'};
+const ALARP_STRENGTH=[
+  {v:'inherent',l:'Desain inherently safer',s:'Sangat Kuat'},
+  {v:'passive',l:'Pasif / mekanis (relief valve, margin desain)',s:'Kuat'},
+  {v:'auto',l:'Proteksi otomatis terengineer',s:'Sedang–Kuat'},
+  {v:'alarm',l:'Alarm dengan respons operator',s:'Sedang'},
+  {v:'proc',l:'Prosedur / pelatihan saja',s:'Lemah'}
+];
+const ALARP_DECISION={
+  add:'Tambah safeguard',
+  consider:'Pertimbangkan reduksi lanjutan',
+  likely:'Kemungkinan besar ALARP',
+  noaction:'ALARP – tidak perlu tindakan tambahan',
+  donotadd:'ALARP – safeguard tidak perlu ditambahkan'
+};
 const MC={Man:'#7F77DD',Machine:'#378ADD',Material:'#1D9E75',Method:'#BA7517',Measurement:'#D85A30',Milieu:'#639922'};
 const MB={Man:'#EEEDFE',Machine:'#E6F1FB',Material:'#E1F5EE',Method:'#FAEEDA',Measurement:'#FAECE7',Milieu:'#EAF3DE'};
 const MI={Man:'ti-users',Machine:'ti-engine',Material:'ti-package',Method:'ti-route',Measurement:'ti-ruler-measure',Milieu:'ti-world'};
@@ -378,7 +392,7 @@ let user=null,activeModule='f020',activeTab='dashboard';
 let hazidData=[],libData=[],f021Data=[];
 let seeded={hazid:false,lib:false,f021:false};
 let filt={section:'all',rr:'all',sig:'all',m6:'all',search:''};
-let filt21={section:'all',rr:'all',program:'all',search:''};
+let filt21={section:'all',rr:'all',program:'all',alarp:'all',search:''};
 let libFilt={m:'Man',search:'',domain:'all'};
 let formRC=[],charts={};
 let editId=null,editId21=null,editIdLib=null;
@@ -707,6 +721,9 @@ function renderF021Dash(){
   const secs=[...new Set(all.map(d=>d.section))];
   const bySec=secs.map(s=>({s,n:all.filter(d=>d.section===s).length,prog:all.filter(d=>d.section===s&&d.programNeeded).length}));
   const rr2={'EHS-1':0,'EHS-2':0,'EHS-3':0,'EHS-4':0};all.forEach(d=>{if(rr2[d.residualRR]!==undefined)rr2[d.residualRR]++;});
+  const alarpNeeded=all.filter(d=>d.residualRR&&d.residualRR!=='EHS-1');
+  const alarpDone=alarpNeeded.filter(d=>d.alarpJustif&&d.alarpJustif.trim()).length;
+  const alarpMissing=alarpNeeded.length-alarpDone;
 
   const html=`
 <div class="flow-banner" style="background:linear-gradient(90deg,var(--amber-lt),var(--teal-lt))">
@@ -721,6 +738,10 @@ function renderF021Dash(){
   <div class="sc info"><div class="sl">Butuh program</div><div class="sv">${prog}</div><div class="ss">programme required = Y</div></div>
   <div class="sc success"><div class="sl">Residual ≤ EHS-2</div><div class="sv">${mitigated}</div><div class="ss">risiko berhasil diturunkan</div></div>
   <div class="sc warn"><div class="sl">Residual ≥ EHS-3</div><div class="sv">${all.length-mitigated}</div><div class="ss">perlu tindak lanjut lebih</div></div>
+</div>
+<div class="stats-grid" style="grid-template-columns:repeat(2,1fr)">
+  <div class="sc success"><div class="sl">ALARP terdokumentasi</div><div class="sv">${alarpDone}</div><div class="ss">dari ${alarpNeeded.length} entri residual EHS-2/3/4 (Attachment E)</div></div>
+  <div class="sc ${alarpMissing>0?'danger':'success'}"><div class="sl">ALARP belum ada</div><div class="sv">${alarpMissing}</div><div class="ss">${alarpMissing>0?'perlu justifikasi ALARP segera':'semua terdokumentasi'}</div></div>
 </div>
 <div class="chart-grid">
   <div class="chart-card"><h3>Distribusi residual risk per section</h3><div class="chart-wrap"><canvas id="f21C1"></canvas></div></div>
@@ -749,12 +770,21 @@ function renderF021Dash(){
 }
 
 // ─────────────── F021 LIST ───────────────
+function alarpB(d){
+  if(!d.residualRR||d.residualRR==='EHS-1')return'<span style="font-size:10px;color:var(--text3)">–</span>';
+  if(d.alarpJustif&&d.alarpJustif.trim()){
+    const dec=ALARP_DECISION[d.alarpDecision]||'';
+    return`<span class="badge" style="background:var(--teal-lt);color:var(--teal)" title="${dec}"><i class="ti ti-check" style="font-size:9px"></i> Terdokumentasi</span>`;
+  }
+  return`<span class="badge b-sig" title="Wajib didokumentasikan untuk ${d.residualRR}"><i class="ti ti-alert-triangle" style="font-size:9px"></i> Belum ada</span>`;
+}
 function renderF021List(){
   const secs=[...new Set(f021Data.map(d=>d.section))];
   let rows=[...f021Data];
   if(filt21.section!=='all')rows=rows.filter(d=>d.section===filt21.section);
   if(filt21.rr!=='all')rows=rows.filter(d=>d.residualRR===filt21.rr);
   if(filt21.program!=='all')rows=rows.filter(d=>filt21.program==='Y'?d.programNeeded:!d.programNeeded);
+  if(filt21.alarp&&filt21.alarp!=='all')rows=rows.filter(d=>{const needed=d.residualRR&&d.residualRR!=='EHS-1';const done=!!(d.alarpJustif&&d.alarpJustif.trim());if(filt21.alarp==='missing')return needed&&!done;if(filt21.alarp==='done')return needed&&done;return true;});
   if(filt21.search)rows=rows.filter(d=>[d.section,d.activity,d.sub,d.hazard,d.programDesc,d.opportunity].join(' ').toLowerCase().includes(filt21.search.toLowerCase()));
   const secOpts=secs.map(s=>`<option value="${s}" ${filt21.section===s?'selected':''}>${s}</option>`).join('');
   const trows=rows.map((d,i)=>`<tr>
@@ -768,6 +798,7 @@ function renderF021List(){
     <td style="text-align:center"><span class="badge" style="background:${d.programNeeded?'var(--blue-lt)':'var(--bg)'};color:${d.programNeeded?'var(--blue)':'var(--text3)'}">${d.programNeeded?'Y':'N'}</span></td>
     <td style="max-width:140px;font-size:11px;color:var(--text2)">${d.programDesc||'-'}</td>
     <td>${rrB(d.residualRR)} ${sigB(d.residualSig)}</td>
+    <td>${alarpB(d)}</td>
     <td style="white-space:nowrap"><button class="btn-del" onclick="editF021('${d.id}')" style="color:var(--teal);border-color:var(--teal);margin-right:3px"><i class="ti ti-edit"></i></button><button class="btn-del" onclick="delF021('${d.id}')"><i class="ti ti-trash"></i></button></td>
   </tr>`).join('');
   return`
@@ -785,12 +816,17 @@ function renderF021List(){
     <option value="Y" ${filt21.program==='Y'?'selected':''}>Butuh program (Y)</option>
     <option value="N" ${filt21.program==='N'?'selected':''}>Tidak butuh (N)</option>
   </select>
+  <select onchange="filt21.alarp=this.value;render()">
+    <option value="all" ${(!filt21.alarp||filt21.alarp==='all')?'selected':''}>Semua ALARP</option>
+    <option value="missing" ${filt21.alarp==='missing'?'selected':''}>ALARP belum ada</option>
+    <option value="done" ${filt21.alarp==='done'?'selected':''}>ALARP terdokumentasi</option>
+  </select>
   <input type="text" placeholder="Cari hazard, program, section..." value="${filt21.search}" oninput="filt21.search=this.value;render()">
   <span class="cnt">${rows.length} entri</span>
 </div>
 <div class="tbl-wrap"><div class="tbl-scroll"><table>
-<thead><tr><th>#</th><th>Section</th><th>Aktivitas</th><th>Hazard</th><th>Risk awal</th><th>Kontrol tambahan</th><th>Peluang</th><th>Prog.</th><th>Deskripsi program</th><th>Residual risk</th><th></th></tr></thead>
-<tbody>${trows||'<tr><td colspan="11"><div class="empty"><i class="ti ti-inbox-off"></i><p>Tidak ada data</p></div></td></tr>'}</tbody>
+<thead><tr><th>#</th><th>Section</th><th>Aktivitas</th><th>Hazard</th><th>Risk awal</th><th>Kontrol tambahan</th><th>Peluang</th><th>Prog.</th><th>Deskripsi program</th><th>Residual risk</th><th>ALARP</th><th></th></tr></thead>
+<tbody>${trows||'<tr><td colspan="12"><div class="empty"><i class="ti ti-inbox-off"></i><p>Tidak ada data</p></div></td></tr>'}</tbody>
 </table></div></div>`;
 }
 window.delF021=async id=>{if(!confirm('Hapus entri F021?'))return;try{await deleteDoc(doc(db,'f021',id));toast('Dihapus');}catch(e){toast('Gagal','err');}};
@@ -847,6 +883,28 @@ function renderF021Input(){
       <div class="fg" style="border-top:1px solid var(--border);padding-top:12px"><label>Residual LL (setelah kontrol tambahan)</label><select id="g21rll" onchange="calcResidualRL()"><option value="">--</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></div>
       <div class="fg" id="residualBox" style="display:none"><label>Residual risk (auto)</label><div class="residual-preview"><div class="rl-lbl" id="rrlCode"></div><div class="rl-big" id="rrlBadge"></div></div></div>
       <div class="fg"><label>Residual signifikansi</label><select id="g21rsig"><option value="">-</option><option value="S">Significant (S)</option><option value="NS">Non-Significant (NS)</option></select></div>
+
+      <div class="fg full" id="alarpSection" style="display:none;border-top:1px solid var(--border);padding-top:14px;margin-top:2px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <i class="ti ti-scale" style="color:var(--teal)"></i>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--teal)">Demonstrasi ALARP (Attachment E)</div>
+            <div style="font-size:10px;color:var(--text3)" id="alarpSubtitle">Wajib untuk residual risk EHS-2 / EHS-3 / EHS-4</div>
+          </div>
+        </div>
+        <div class="fgrid">
+          <div class="fg"><label>Kekuatan safeguard terpasang</label><select id="g21alarpStrength">
+            <option value="">--</option>
+            ${ALARP_STRENGTH.map(o=>`<option value="${o.v}">${o.l} (${o.s})</option>`).join('')}
+          </select></div>
+          <div class="fg"><label>Keputusan ALARP</label><select id="g21alarpDecision">
+            <option value="">--</option>
+            ${Object.entries(ALARP_DECISION).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}
+          </select></div>
+          <div class="fg full"><label>Justifikasi ALARP</label><textarea id="g21alarpJustif" placeholder="Jelaskan: skenario kredibel & konsekuensi, kekuatan safeguard eksisting, apakah safeguard tambahan proven/wajar biayanya, dan kesimpulan proporsionalitas risiko vs biaya/usaha." style="min-height:72px"></textarea>
+          <div class="hint">Contoh format: lihat Attachment E — Qualitative Risk Description → Existing Safeguards → Proposed Safeguard → ALARP Conclusion.</div></div>
+        </div>
+      </div>
       <div class="fg full" style="display:flex;gap:8px;padding-top:4px">
         <button class="btn-primary teal" onclick="submitF021()"><i class="ti ti-device-floppy"></i> ${isEdit21?'Update F021':'Simpan ke F021'}</button>
         <button class="btn-secondary" onclick="resetF021()"><i class="ti ${isEdit21?'ti-x':'ti-refresh'}"></i> ${isEdit21?'Batal edit':'Reset'}</button>
@@ -864,9 +922,9 @@ window.autoFillF021=id=>{
   const re=document.getElementById('raExisting');if(re)re.innerHTML=rrB(h.rr);
 };
 window.toggleProgDesc=()=>{const b=document.getElementById('progDescBox');if(b)b.style.display=document.getElementById('g21prog')?.checked?'':'none';};
-window.calcResidualRL=()=>{const sr=document.getElementById('g21rsr')?.value,ll=document.getElementById('g21rll')?.value,b=document.getElementById('residualBox');if(!b)return;if(sr&&ll){const code=sr+ll,rr=RM[code]||'-';b.style.display='';document.getElementById('rrlCode').textContent='Residual code: '+code;document.getElementById('rrlBadge').innerHTML=rrB(rr);const ra=document.getElementById('raResidual');if(ra)ra.innerHTML=rrB(rr);const rc=document.getElementById('raCtrl');if(rc)rc.textContent=document.getElementById('g21ctrl')?.value||'–';}else b.style.display='none';};
+window.calcResidualRL=()=>{const sr=document.getElementById('g21rsr')?.value,ll=document.getElementById('g21rll')?.value,b=document.getElementById('residualBox');if(!b)return;const alarpSec=document.getElementById('alarpSection');if(sr&&ll){const code=sr+ll,rr=RM[code]||'-';b.style.display='';document.getElementById('rrlCode').textContent='Residual code: '+code;document.getElementById('rrlBadge').innerHTML=rrB(rr);const ra=document.getElementById('raResidual');if(ra)ra.innerHTML=rrB(rr);const rc=document.getElementById('raCtrl');if(rc)rc.textContent=document.getElementById('g21ctrl')?.value||'–';if(alarpSec){if(rr==='EHS-2'||rr==='EHS-3'||rr==='EHS-4'){alarpSec.style.display='';const sub=document.getElementById('alarpSubtitle');if(sub)sub.textContent=`Residual risk saat ini ${rr} — demonstrasi ALARP wajib didokumentasikan`;}else{alarpSec.style.display='none';}}}else{b.style.display='none';if(alarpSec)alarpSec.style.display='none';}};
 window.prevCtrl21=()=>{const v=(document.getElementById('g21ctrl')?.value||'').split(',').map(n=>n.trim()).filter(Boolean);const p=document.getElementById('ctrlPrev21');if(p)p.innerHTML=v.map(n=>CTRL[n]?`<span style="display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:10px;margin:1px">${n}. ${CTRL[n]}</span>`:'').join('');};
-window.resetF021=()=>{editId21=null;['g21s','g21a','g21sub','g21haz','g21exRR','g21sig','g21cat','g21ctrl','g21opp','g21rsr','g21rll','g21rsig','g21progdesc'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});const p=document.getElementById('g21prog');if(p)p.checked=false;const pb=document.getElementById('progDescBox');if(pb)pb.style.display='none';const rb=document.getElementById('residualBox');if(rb)rb.style.display='none';const ra=document.getElementById('riskArrow');if(ra)ra.style.display='none';const hr=document.getElementById('hazRef');if(hr)hr.value='';render();};
+window.resetF021=()=>{editId21=null;['g21s','g21a','g21sub','g21haz','g21exRR','g21sig','g21cat','g21ctrl','g21opp','g21rsr','g21rll','g21rsig','g21progdesc','g21alarpStrength','g21alarpDecision','g21alarpJustif'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});const p=document.getElementById('g21prog');if(p)p.checked=false;const pb=document.getElementById('progDescBox');if(pb)pb.style.display='none';const rb=document.getElementById('residualBox');if(rb)rb.style.display='none';const as=document.getElementById('alarpSection');if(as)as.style.display='none';const ra=document.getElementById('riskArrow');if(ra)ra.style.display='none';const hr=document.getElementById('hazRef');if(hr)hr.value='';render();};
 window.editF021=id=>{
   const d=f021Data.find(x=>x.id===id);if(!d)return;
   editId21=id;
@@ -876,7 +934,7 @@ window.editF021=id=>{
   render();
   setTimeout(()=>{
     const set=(eid,val)=>{const e=document.getElementById(eid);if(e)e.value=val||'';};
-    set('g21s',d.section);set('g21a',d.activity);set('g21sub',d.sub);set('g21haz',d.hazard);set('g21exRR',d.existingRR);set('g21sig',d.sig);set('g21cat',d.category||'Environment');set('g21ctrl',d.addControl);set('g21opp',d.opportunity);set('g21progdesc',d.programDesc);set('g21rsr',d.residualSR);set('g21rll',d.residualLL);set('g21rsig',d.residualSig);
+    set('g21s',d.section);set('g21a',d.activity);set('g21sub',d.sub);set('g21haz',d.hazard);set('g21exRR',d.existingRR);set('g21sig',d.sig);set('g21cat',d.category||'Environment');set('g21ctrl',d.addControl);set('g21opp',d.opportunity);set('g21progdesc',d.programDesc);set('g21rsr',d.residualSR);set('g21rll',d.residualLL);set('g21rsig',d.residualSig);set('g21alarpStrength',d.alarpStrength);set('g21alarpDecision',d.alarpDecision);set('g21alarpJustif',d.alarpJustif);
     const p=document.getElementById('g21prog');if(p)p.checked=!!d.programNeeded;
     toggleProgDesc();prevCtrl21();calcResidualRL();toggleCatHint('g21cat','g21catHint');
     const ra=document.getElementById('riskArrow');if(ra){ra.style.display='flex';const re=document.getElementById('raExisting');if(re)re.innerHTML=rrB(d.existingRR);}
@@ -897,7 +955,10 @@ window.submitF021=async()=>{
     programDesc:document.getElementById('g21progdesc')?.value||'',
     residualSR:rsr,residualLL:rll?parseInt(rll):0,
     residualRL:rlc,residualRR:rlc?RM[rlc]||'':'',
-    residualSig:document.getElementById('g21rsig')?.value||''
+    residualSig:document.getElementById('g21rsig')?.value||'',
+    alarpStrength:document.getElementById('g21alarpStrength')?.value||'',
+    alarpDecision:document.getElementById('g21alarpDecision')?.value||'',
+    alarpJustif:document.getElementById('g21alarpJustif')?.value||''
   };
   try{
     if(editId21){await updateDoc(doc(db,'f021',editId21),payload);toast('F021 diperbarui!');}
